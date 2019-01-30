@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.ProductCategoryDao">
+	
+	<!--产品分类列表-->
+	<select id="getCateList" resultType="ProductCategory" >
+		select * from productCategory 
+	</select>
+	
+	<!-- 新增产品分类 -->
+	<insert id="addCate" parameterType="String">
+		INSERT INTO productCategory VALUE(NULL,#{productCategoryName})
+	</insert>
+	
+	<!-- 根据id修改产品分类 -->
+	<update id="updataProCategory" parameterType="int">
+		update productCategory set productCategoryName=#{productCategoryName} where id=#{id}
+	</update>
+	
+	<!-- 根据id删除产品分类 -->
+	<delete id="delProCategory">
+		delete from productCategory where id=#{id}
+	</delete>
+</mapper>

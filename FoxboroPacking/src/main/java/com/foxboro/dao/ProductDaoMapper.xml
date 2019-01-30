@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.ProductDao">
+	
+	<!-- 按条件查询包材信息 -->
+	<select id="getProListByCondition" resultType="Product">
+		select * from product p where 1=1
+		<if test="pwd!=null and pwd!=''">and p.pwd like concat ('%',#{pwd},'%')</if>
+		<if test="box!=null and box!=''">and p.box like concat ('%',#{box},'%')</if>
+		<if test="gasket!=null and gasket!=''">and p.gasket like concat ('%',#{gasket},'%')</if>
+		<if test="spongiaOne!=null and spongiaOne!=''">and p.spongiaOne like concat ('%',#{spongiaOne},'%')</if>
+		<if test="spongiaTwo!=null and spongiaTwo!=''">and p.spongiaTwo like concat ('%',#{spongiaTwo},'%')</if>
+		<if test="productCategoryId!=0">and p.productCategoryId=#{productCategoryId}</if>
+		order by id desc limit #{beginNo},#{pageSize}
+	</select>
+	
+	<!-- 按条件查询包材信息数量 -->
+	<select id="countByCondition" resultType="int">
+		select count(*) from product p where 1=1
+		<if test="pwd!=null and pwd!=''">and p.pwd like concat ('%',#{pwd},'%')</if>
+		<if test="box!=null and box!=''">and p.box like concat ('%',#{box},'%')</if>
+		<if test="gasket!=null and gasket!=''">and p.gasket like concat ('%',#{gasket},'%')</if>
+		<if test="spongiaOne!=null and spongiaOne!=''">and p.spongiaOne like concat ('%',#{spongiaOne},'%')</if>
+		<if test="spongiaTwo!=null and spongiaTwo!=''">and p.spongiaTwo like concat ('%',#{spongiaTwo},'%')</if>
+		<if test="productCategoryId!=0">and p.productCategoryId=#{productCategoryId}</if>
+	</select>
+	
+	<!-- 按条件查询产品包材 -->
+	<select id="getProListByPwd" resultType="Product" >
+		select * from product where pwd=#{pwd}
+	</select>
+	
+	<!-- 增加包材工艺 -->
+	<insert id="addProduct" parameterType="Product">
+		insert into product value(null,#{product.pwd},#{product.pwdQuantity},#{product.box},#{product.boxQuantity},#{product.gasket},#{product.gasketQuantity},
+		#{product.spongiaOne},#{product.spongiaOneQuantity},#{product.spongiaTwo},#{product.spongiaTwoQuantity},#{product.esdBag},#{product.esdBagQuantity},
+		#{product.geDang},#{product.geDangQuantity},#{product.esdTable},#{product.esdTableQuantity},#{product.esdBubbleBag},#{product.esdBubbleBagQuantity},
+		#{product.remark},#{product.productCategoryId})
+	</insert>
+	
+	<!-- 按pwd查找是否存在产品工艺 -->
+	<select id="getPro" resultType="int">
+		select count(*) from product where pwd=#{pwd}
+	</select>
+	
+	<!-- 按id删除产品包材工艺 -->
+	<delete id="delPro">
+		delete from product where id=#{id}
+	</delete>
+	
+	<!-- 根据id修改产品包材工艺 -->
+	<update id="updatePro" parameterType="product">
+		update product set
+			product.pwd=#{product.pwd},
+			product.pwdQuantity=#{product.pwdQuantity},
+			product.box=#{product.box},
+			product.boxQuantity=#{product.boxQuantity},
+			product.gasket=#{product.gasket},
+			product.gasketQuantity=#{product.gasketQuantity},
+			product.spongiaOne=#{product.spongiaOne},
+			product.spongiaOneQuantity=#{product.spongiaOneQuantity},
+			product.spongiaTwo=#{product.spongiaTwo},
+			product.spongiaTwoQuantity=#{product.spongiaTwoQuantity},
+			product.esdBag=#{product.esdBag},
+			product.esdBagQuantity=#{product.esdBagQuantity},
+			product.geDang=#{product.geDang},
+			product.geDangQuantity=#{product.geDangQuantity},
+			product.esdTable=#{product.esdTable},
+			product.esdTableQuantity=#{product.esdTableQuantity},
+			product.esdBubbleBag=#{product.esdBubbleBag},
+			product.esdBubbleBagQuantity=#{product.esdBubbleBagQuantity},
+			product.remark=#{product.remark},
+			product.productCategoryId=#{product.productCategoryId}
+		where id=#{product.id}
+	</update>
+	
+	<!-- 根据id查询产品包材工艺 -->
+	<select id="getProById" resultType="product">
+		select *,(select productCategoryName from productCategory c where p.productCategoryId=c.id) as productCategoryName
+		from product p where p.id=#{id}
+	</select>
+	
+	<!-- 查询单个包材库存数量 -->
+	<select id="getProductNum" resultType="int">
+		select count(*) from product where 1=1
+		<if test="box!=null and box!=''">box=#{box}</if>
+		<if test="gasket!=null and gasket!=''">gasket=#{gasket}</if>
+		<if test="spongiaOne!=null and spongiaOne!=''">spongiaOne=#{spongiaOne}</if>
+		<if test="box!=null and box!=''">box=#{box}</if>
+		<if test="box!=null and box!=''">box=#{box}</if>
+		<if test="box!=null and box!=''">box=#{box}</if>
+		<if test="box!=null and box!=''">box=#{box}</if>
+		<if test="box!=null and box!=''">box=#{box}</if>
+	</select>
+	
+	<!-- 根据产品分来ID查找产品 -->
+	<select id="getProByProCate" resultType="product">
+		select * from product where productCategoryId=#{productCategoryId}
+	</select>
+	
+	<!-- 查询所有产品分类数量 -->
+	<select id="countByProCategory" resultType="int">
+		select count(*) from productcategory;
+	</select>
+	
+	<!-- 查询所有产品分类 -->
+	<select id="getProCategoryList" resultType="ProductCategory">
+		select * from productcategory order by id desc limit #{beginNo},#{pageSize}
+	</select>
+</mapper>

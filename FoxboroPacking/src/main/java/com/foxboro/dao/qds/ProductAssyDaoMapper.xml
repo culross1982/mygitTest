@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.qds.ProductAssyDao">
+	
+	<!-- 按条件查询QDS装配产品 -->
+	<select id="getQProAssy" resultType="QdsProductAssy" parameterType="QdsProductAssy">
+		SELECT *,(SELECT realname FROM users WHERE id=q.assyBy) AS realname,(select realname from users where id=q.assyModifyBy) AS modifyName FROM qdsProductAssy q WHERE 1=1
+		<if test="partNo!=null and partNo!=''">and q.partNo like concat ('%',#{partNo},'%')</if>
+		<if test="assyNo!=null and assyNo!=''">and q.assyNo like concat ('%',#{assyNo},'%')</if>
+		<if test="realname!=null and realname!=''">AND q.assyBy IN (SELECT id FROM users WHERE realname LIKE CONCAT ('%',#{realname},'%'))</if>
+		<if test="dateStart!=null and dateEnd!=null and dateStart!='' and dateEnd!=''">
+		and DATE_FORMAT(q.assyTime,'%Y-%m-%d') BETWEEN #{dateStart} AND #{dateEnd}
+		</if>
+		and q.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) 
+		order by id desc limit #{beginNo},#{pageSize}
+	</select>
+	
+	<!-- 按条件查询QDS装配产品总数 -->
+	<select id="getQProAssyCount" resultType="int" parameterType="QdsProductAssy">
+		select count(*) from qdsProductAssy q where 1=1
+		<if test="partNo!=null and partNo!=''">and q.partNo like concat ('%',#{partNo},'%')</if>
+		<if test="assyNo!=null and assyNo!=''">and q.assyNo like concat ('%',#{assyNo},'%')</if>
+		<if test="realname!=null and realname!=''">AND q.assyBy IN (SELECT id FROM users WHERE realname LIKE CONCAT ('%',#{realname},'%'))</if>
+		<if test="dateStart!=null and dateEnd!=null and dateStart!='' and dateEnd!=''">
+		and DATE_FORMAT(q.assyTime,'%Y-%m-%d') BETWEEN #{dateStart} AND #{dateEnd}
+		</if>
+		and q.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) 
+	</select>
+	
+	<!-- 获取所有装配产品记录ASC -->
+	<select id="getQProAssyAsc" resultType="QdsProductAssy">
+		SELECT *,(SELECT realname FROM users WHERE id=q.assyBy) AS realname,(select realname from users where id=q.assyModifyBy) AS modifyName FROM qdsProductAssy q 
+		WHERE q.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName} )
+		order by assyTime limit #{beginNo},#{pageSize}
+	</select>
+	
+	<!-- 查询数据是否存在 -->
+	<select id="getAssyDataIsExsit" parameterType="QdsProductAssy" resultType="int">
+		SELECT COUNT(*) FROM qdsProductAssy WHERE partNo=#{partNo} OR assyNo=#{assyNo}
+	</select>
+	
+	<!-- 新增装配数据 -->
+	<insert id="addAssyData" parameterType="QdsProductAssy">
+		insert into qdsProductAssy value (null,#{partNo},#{assyNo},now(),#{assyBy},null,null,#{qdsProCategoryId})
+	</insert>
+	
+	<!-- 按id删除装配数据 -->
+	<delete id="delAssyDataById" parameterType="int">
+		delete from qdsProductAssy where id=#{id}
+	</delete>
+	
+	<!-- 按id查询单个装配数据 -->
+	<select id="getAssyDataById" parameterType="int" resultType="QdsProductAssy">
+		select * from qdsProductAssy where id=#{id}
+	</select>
+	
+	<!-- 更新装配数据 -->
+	<update id="updateProductAssy" parameterType="QdsProductAssy">
+		update qdsProductAssy set partNo=#{partNo},assyNo=#{assyNo},assyModifyTime=now(),assyModifyBy=#{assyModifyBy}
+		where id=#{id}
+	</update>
+	
+	<!-- 根据id修改产品包材工艺 -->
+	<!-- <update id="updatePro" parameterType="product">
+		update product set
+			product.pwd=#{product.pwd},
+			product.pwdQuantity=#{product.pwdQuantity},
+			product.box=#{product.box},
+			product.boxQuantity=#{product.boxQuantity},
+			product.gasket=#{product.gasket},
+			product.gasketQuantity=#{product.gasketQuantity},
+			product.spongiaOne=#{product.spongiaOne},
+			product.spongiaOneQuantity=#{product.spongiaOneQuantity},
+			product.spongiaTwo=#{product.spongiaTwo},
+			product.spongiaTwoQuantity=#{product.spongiaTwoQuantity},
+			product.esdBag=#{product.esdBag},
+			product.esdBagQuantity=#{product.esdBagQuantity},
+			product.geDang=#{product.geDang},
+			product.geDangQuantity=#{product.geDangQuantity},
+			product.esdTable=#{product.esdTable},
+			product.esdTableQuantity=#{product.esdTableQuantity},
+			product.esdBubbleBag=#{product.esdBubbleBag},
+			product.esdBubbleBagQuantity=#{product.esdBubbleBagQuantity},
+			product.remark=#{product.remark},
+			product.productCategoryId=#{product.productCategoryId}
+		where id=#{product.id}
+	</update> -->
+	
+	<!-- 根据id查询产品包材工艺 -->
+	<!-- <select id="getProById" resultType="product">
+		select *,(select productCategoryName from productCategory c where p.productCategoryId=c.id) as productCategoryName
+		from product p where p.id=#{id}
+	</select> -->
+	
+	<!-- 查询单个包材库存数量 -->
+	<!-- <select id="getProductNum" resultType="int">
+		select count(*) from product where 1=1
+		<if test="box!=null and box!=''">box=#{box}</if>
+		<if test="gasket!=null and gasket!=''">gasket=#{gasket}</if>
+		<if test="spongiaOne!=null and spongiaOne!=''">spongiaOne=#{spongiaOne}</if>
+		<if test="box!=null and box!=''">box=#{box}</if>
+		<if test="box!=null and box!=''">box=#{box}</if>
+		<if test="box!=null and box!=''">box=#{box}</if>
+		<if test="box!=null and box!=''">box=#{box}</if>
+		<if test="box!=null and box!=''">box=#{box}</if>
+	</select> -->
+	
+	<!-- 根据产品分来ID查找产品 -->
+	<!-- <select id="getProByProCate" resultType="product">
+		select * from product where productCategoryId=#{productCategoryId}
+	</select> -->
+	
+	<!-- 查询所有产品分类数量 -->
+	<!-- <select id="countByProCategory" resultType="int">
+		select count(*) from productcategory;
+	</select> -->
+	
+	<!-- 查询所有产品分类 -->
+	<!-- <select id="getProCategoryList" resultType="ProductCategory">
+		select * from productcategory order by id desc limit #{beginNo},#{pageSize}
+	</select> -->
+</mapper>

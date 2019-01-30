@@ -1,0 +1,30 @@
+P0916CQ           |0M|SF17350008  |MTC|N|50/50/6 technician  |2017-09-18|10:22|P|N|PASSED                             |
+P0916CQ           |0M|SF17350011  |MTC|N|50/50/6 technician  |2017-09-18|10:25|P|N|PASSED                             |
+P0916CQ           |0M|SF17350003  |MTC|N|50/50/6 technician  |2017-09-18|10:27|P|N|PASSED                             |
+P0916CQ           |0M|SF17350009  |MTC|N|50/50/6 technician  |2017-09-18|10:30|F|N|Lo Margin Power Supp  0.103119     |
+P0916CQ           |0M|SF17350009  |MTC|N|50/50/6 technician  |2017-09-18|10:30|F|N|Check Bar Code  0.0                |
+P0916CQ           |0M|SF17350009  |MTC|N|50/50/6 technician  |2017-09-18|10:32|F|N|Check Bar Code  0.0                |
+P0916CQ           |0M|SF17350009  |MTC|N|50/50/6 technician  |2017-09-18|10:32|F|N|Check Bar Code  0.0                |
+P0916CQ           |0M|SF17350009  |MTC|N|50/50/6 technician  |2017-09-18|10:35|P|N|PASSED                             |
+P0916CQ           |0M|SF17350004  |MTC|N|50/50/6 technician  |2017-09-18|10:37|P|N|PASSED                             |
+P0916CQ           |0M|SF17350001  |MTC|N|50/50/6 technician  |2017-09-18|10:39|P|N|PASSED                             |
+P0916CQ           |0M|SF17350006  |MTC|N|50/50/6 technician  |2017-09-18|10:42|P|N|PASSED                             |
+P0916CQ           |0M|SF17350020  |MTC|N|50/50/6 technician  |2017-09-18|10:44|P|N|PASSED                             |
+P0916CQ           |0M|SF17350002  |MTC|N|50/50/6 technician  |2017-09-18|10:47|P|N|PASSED                             |
+P0916CQ           |0M|SF17350016  |MTC|N|50/50/6 technician  |2017-09-18|10:49|P|N|PASSED                             |
+P0916CQ           |0M|SF17350014  |MTC|N|50/50/6 technician  |2017-09-18|11:00|F|N|CH 1 25KHz Pulse Inp  -1.0         |
+P0916CQ           |0M|SF17350014  |MTC|N|50/50/6 technician  |2017-09-18|11:03|P|N|PASSED                             |
+P0916CQ           |0M|SF17350019  |MTC|N|50/50/6 technician  |2017-09-18|11:05|P|N|PASSED                             |
+P0916CQ           |0M|SF17350013  |MTC|N|50/50/6 technician  |2017-09-18|11:07|F|N|Check Bar Code  0.0                |
+P0916CQ           |0M|SF17350013  |MTC|N|50/50/6 technician  |2017-09-18|11:09|P|N|PASSED                             |
+P0916CQ           |0M|SF17350010  |MTC|N|50/50/6 technician  |2017-09-18|11:11|P|N|PASSED                             |
+P0916CQ           |0M|SF17350012  |MTC|N|50/50/6 technician  |2017-09-18|11:13|P|N|PASSED                             |
+P0916CQ           |0M|SF17350007  |MTC|N|50/50/6 technician  |2017-09-18|11:15|P|N|PASSED                             |
+P0916CQ           |0M|SF17350015  |MTC|N|50/50/6 technician  |2017-09-18|11:18|F|N|Check Bar Code  0.0                |
+P0916CQ           |0M|SF17350015  |MTC|N|50/50/6 technician  |2017-09-18|11:19|F|N|Check Bar Code  0.0                |
+P0916CQ           |0M|SF17350015  |MTC|N|50/50/6 technician  |2017-09-18|11:21|P|N|PASSED                             |
+P0916CQ           |0M|SF17350005  |MTC|N|50/50/6 technician  |2017-09-18|11:23|P|N|PASSED                             |
+P0916CQ           |0M|SF17350018  |MTC|N|50/50/6 technician  |2017-09-18|11:26|P|N|PASSED                             |
+P0916CQ           |0M|SF17350017  |MTC|N|50/50/6 technician  |2017-09-18|11:28|P|N|PASSED                             |
+P0914SV           |0H|SF17300087  |MTC|N|50/50/6 technician  |2017-09-18|14:30|F|N|Calibrate  0.0                     |
+P0914SV           |0H|SF17300087  |MTC|N|50/50/6 technician  |2017-09-18|14:31|F|N|Calibrate  0.0                     |

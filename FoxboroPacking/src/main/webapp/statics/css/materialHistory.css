@@ -1,0 +1,11 @@
+.daterange i {
+	position: absolute;
+	bottom: 10px;
+	right: -120px;
+	top: auto;
+	cursor: pointer;
+}
+
+.daterange {
+	position: relative;
+}

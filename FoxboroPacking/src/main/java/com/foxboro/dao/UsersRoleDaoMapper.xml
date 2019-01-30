@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.UsersRoleDao">
+
+	<!-- 新增用户角色关系 -->
+	<insert id="addUserRole" parameterType="UsersRole">
+		INSERT INTO usersRole VALUE (null,#{username},#{roleId});
+	</insert>
+	
+	<!-- 根据用户名查找对应角色 -->
+	<select id="getRoleIdByUsername" parameterType="String" resultType="int">
+		select roleId from usersrole where username=#{username}
+	</select>
+	
+	<!-- 根据用户名删除对应角色 -->
+	<delete id="delUserRole" parameterType="String">
+		delete from usersrole where username=#{username}
+	</delete>
+</mapper>

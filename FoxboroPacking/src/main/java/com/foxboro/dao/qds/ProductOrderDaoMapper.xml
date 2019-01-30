@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.qds.ProductOrderDao">
+	
+	<!-- 按条件查询QDS工作令 -->
+	<select id="getQdsProductOrder" resultType="QdsProductOrder" parameterType="QdsProductOrder">
+		SELECT *,(SELECT realName FROM users WHERE id=o.createBy) AS realName FROM qdsProductOrder o WHERE 1=1
+		<if test="order!=null and order!=''">and o.order like concat ('%',#{order},'%')</if>
+		<if test="module!=null and module!=''">and o.module like concat ('%',#{module},'%')</if>
+		and o.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) 
+		order by id desc limit #{beginNo},#{pageSize}
+	</select>
+	
+	<!-- 按条件查询QDS工作令总数 -->
+	<select id="getQdsProductOrderCount" resultType="int" parameterType="QdsProductOrder">
+		select count(*) from qdsProductOrder o where 1=1
+		<if test="order!=null and order!=''">and o.order like concat ('%',#{order},'%')</if>
+		<if test="module!=null and module!=''">and o.module like concat ('%',#{module},'%')</if>
+		and o.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) 
+	</select>
+	
+	<!-- 添加产品工作令 -->
+	<insert id="addProductOrder" parameterType="QdsProductOrder">
+		insert into qdsProductOrder value (null,#{order},#{module},#{ver},#{pwdQuantity},#{snStart},#{snEnd},#{createBy},now(),#{qdsProCategoryId})
+	</insert>
+	
+	<!-- 根据order获取对应的id -->
+	<select id="getProductOrderIdByOrder" parameterType="String" resultType="int">
+		select id from qdsProductOrder where `order`=#{order}
+	</select>
+	
+	<!-- 根据snEnd模糊查询productOrder的最大值 -->
+	<select id="getProductOrderBySnEnd" resultType="String">
+		SELECT MAX(p.snEnd) FROM qdsProductOrder AS p 
+		WHERE p.snEnd LIKE CONCAT (#{snEnd},'%') AND 
+		      p.qdsProCategoryId=(SELECT id FROM qdsProCategory WHERE qdsProCategoryName=#{qdsProCategoryName});
+	</select>
+	
+	<!-- 根据id删除对应的productOrder -->
+	<delete id="delProductOrderById" parameterType="int">
+		delete from qdsProductOrder where id=#{id};
+	</delete>
+</mapper>

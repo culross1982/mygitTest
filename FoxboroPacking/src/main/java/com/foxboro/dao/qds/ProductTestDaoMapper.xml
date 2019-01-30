@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.qds.ProductTestDao">
+	
+	<!-- 按条件查询QDS测试产品 -->
+	<select id="getQProTest" resultType="QdsProductTest" parameterType="QdsProductTest">
+		SELECT *,(SELECT realname FROM users WHERE id=t.testBy) AS realname FROM qdsProductTest t WHERE 1=1
+		<if test="testNo!=null and testNo!=''">and t.testNo like concat ('%',#{testNo},'%')</if>
+		<if test="realname!=null and realname!=''">AND t.testBy IN (SELECT id FROM users WHERE realname LIKE CONCAT ('%',#{realname},'%'))</if>
+		<if test="dateStart!=null and dateEnd!=null and dateStart!='' and dateEnd!=''">
+		and DATE_FORMAT(t.testTime,'%Y-%m-%d') BETWEEN #{dateStart} AND #{dateEnd}
+		</if>
+		and t.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) 
+		order by id desc limit #{beginNo},#{pageSize}
+	</select>
+	
+	<!-- 按条件查询QDS测试产品总数 -->
+	<select id="getQProTestCount" resultType="int" parameterType="QdsProductTest">
+		select count(*) from qdsProductTest t where 1=1
+		<if test="testNo!=null and testNo!=''">and t.testNo like concat ('%',#{testNo},'%')</if>
+		<if test="realname!=null and realname!=''">AND t.testBy IN (SELECT id FROM users WHERE realname LIKE CONCAT ('%',#{realname},'%'))</if>
+		<if test="dateStart!=null and dateEnd!=null and dateStart!='' and dateEnd!=''">
+		and DATE_FORMAT(t.testTime,'%Y-%m-%d') BETWEEN #{dateStart} AND #{dateEnd}
+		</if>
+		and t.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) 
+	</select>
+	
+	<!-- 新增测试数据 -->
+	<insert id="addTestData" parameterType="QdsProductTest">
+		insert into qdsProductTest value (null,#{testNo},#{testCode},#{testStatus},#{status},#{testResult},#{testTime},#{testBy},#{testEquipment},#{discription},#{qdsProCategoryId})
+	</insert>
+</mapper>

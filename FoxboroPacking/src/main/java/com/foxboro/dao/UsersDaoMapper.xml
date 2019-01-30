@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.UsersDao">
+
+	<!-- 查找用户 -->
+	<select id="getUsers" resultType="users" parameterType="String">
+		SELECT * FROM users WHERE username=#{username} 
+	</select>
+	<!-- <select id="getUsers" resultType="users" parameterType="String">
+		SELECT *,(SELECT roleName FROM role c WHERE c.id=u.category) AS roleName 
+		FROM users u WHERE username=#{username} 
+	</select> -->
+
+	<!-- 添加用户 -->
+	<insert id="addUser" parameterType="users">
+		insert into users value (null,#{username},#{realname},#{password},null,0,now())
+	</insert>
+
+	<!-- 获取所有用户 -->
+	<select id="getAllUsers" resultType="users">
+		SELECT * FROM users limit #{beginNo},#{pageSize};
+	</select>
+	<!-- <select id="getAllUsers" resultType="users">
+		SELECT *,(SELECT roleName FROM role c WHERE c.id=u.category) AS roleName
+		FROM users u limit #{beginNo},#{pageSize};
+	</select> -->
+
+	<!-- 获取所有用户数量 -->
+	<select id="getAllUsersCount" resultType="int">
+		select count(*) from
+		users;
+	</select>
+
+	<!-- 按id删除用户 -->
+	<delete id="delUserById" parameterType="int">
+		delete from users where id=#{id}
+	</delete>
+
+	<!-- 更新用户 -->
+	<update id="updateUser" parameterType="users">
+		update users
+		<set>
+			<if test="password!=null">password=#{password},</if>
+			<if test="lastLoginTime!=null">lastLoginTime=#{lastLoginTime},</if>
+		</set>
+		where id=#{id}
+	</update>
+
+</mapper>

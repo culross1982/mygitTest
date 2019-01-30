@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.MaterialsHistoryDao">
+	
+	<!-- 添加包材记录 -->
+	<insert id="addHistory" parameterType="materialsHistory">
+		insert into materialsHistory values 
+		(null,#{materialsHistory.materialsId},#{materialsHistory.materialsChangeNum},#{materialsHistory.materialStatusId},
+		 now(),#{materialsHistory.modifyBy},#{materialsHistory.productId},#{materialsHistory.remark})
+	</insert>
+	
+	<!-- 获取所有包材历史记录 按desc排序 -->
+	<select id="getAllMaterialsHistoryList" resultType="MaterialsHistory">
+		SELECT h.*,m.materialsName,u.realname,p.pwd,pc.productCategoryName,c.materialsCategoryName,ms.materialStatusName
+		FROM materialsHistory AS h 
+		INNER JOIN materials AS m ON h.materialsId=m.id 
+		INNER JOIN users AS u ON h.modifyBy=u.id
+		inner join materialsCategory as c on c.id=m.materialsCategoryNameId
+		INNER JOIN materialStatus AS ms ON h.materialStatusId=ms.id
+		LEFT JOIN product AS p ON p.id=h.productId
+		LEFT JOIN productcategory AS pc ON p.productCategoryId=pc.id
+		<if test="dateStart!=null and dateEnd!=null and dateStart!='' and dateEnd!=''">
+		WHERE DATE_FORMAT(h.modifyDate,'%Y-%m-%d') BETWEEN #{dateStart} AND #{dateEnd}
+		</if>
+		<if test="pageSize==0">
+		ORDER BY id
+		</if>
+		<if test="pageSize!=0">
+		ORDER BY id desc limit #{beginNo},#{pageSize}
+		</if>
+		
+	</select>
+	
+	<!-- 获取所有包材历史记录 按asc排序 -->
+	<select id="getAllMaterialsHistoryListAsc" resultType="MaterialsHistory">
+		SELECT h.*,m.materialsName,u.realname,p.pwd,pc.productCategoryName,c.materialsCategoryName,ms.materialStatusName
+		FROM materialsHistory AS h 
+		INNER JOIN materials AS m ON h.materialsId=m.id 
+		INNER JOIN users AS u ON h.modifyBy=u.id
+		inner join materialsCategory as c on c.id=m.materialsCategoryNameId
+		INNER JOIN materialStatus AS ms ON h.materialStatusId=ms.id
+		LEFT JOIN product AS p ON p.id=h.productId
+		LEFT JOIN productcategory AS pc ON p.productCategoryId=pc.id
+		ORDER BY id limit #{beginNo},#{pageSize}
+	</select>
+	
+	<!-- 获取所有包材历史记录条数 -->
+	<select id="getMaterialsHistoryCount" parameterType="MaterialsHistory" resultType="int">
+		select count(*) from materialsHistory as h
+		<if test="dateStart!=null and dateEnd!=null and dateStart!='' and dateEnd!=''">
+		WHERE DATE_FORMAT(h.modifyDate,'%Y-%m-%d') BETWEEN #{dateStart} AND #{dateEnd}
+		</if>
+	</select>
+	
+	<!-- 根据modifyBy查找是否有包材历史记录 -->
+	<select id="getMaterialsHistoryByModify" resultType="int">
+		select count(*) from materialsHistory where modifyBy=#{modifyBy}
+	</select>
+	
+	<!-- 根据pwd查找是否有包材历史记录 -->
+	<select id="getCountByPwd" resultType="int">
+		SELECT COUNT(*) FROM materialsHistory AS m INNER JOIN product AS p ON p.id=m.productId WHERE p.pwd=#{pwd};
+	</select>
+	
+	<!-- 根据pwd查询历史记录中的状态 -->
+	<select id="getMaterialsHistoryStatus" resultType="Integer">
+		SELECT ms.id FROM materialsHistory AS m 
+		INNER JOIN materialStatus ms ON m.materialStatusId=ms.id 
+		INNER JOIN materials AS ma ON m.materialsId=ma.id 
+		WHERE ma.materialsName=#{materialsName}; 
+	</select>
+	
+	<!-- 根据materialsName删除历史记录中的单条记录 -->
+	<delete id="delMaterialsHistory">
+		DELETE FROM materialsHistory WHERE materialsId=(SELECT id FROM materials WHERE materialsName=#{materialsName});
+	</delete>
+	
+	<!-- 根据id删除历史记录中的单条记录 -->
+	<delete id="delMaterialsHistoryById" parameterType="int">
+		delete from materialsHistory where id=#{id}
+	</delete>
+	
+</mapper>

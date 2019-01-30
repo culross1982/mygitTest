@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.RoleDao">
+
+	<!-- 根据用户名获取角色信息 -->
+	<select id="getRoleByUsername" parameterType="String" resultType="Role">
+		SELECT * FROM role 
+		WHERE id IN (SELECT roleId FROM usersrole WHERE username=#{username})
+	</select>
+	
+	<!-- 根据用户名获取修改状态启停 0：启用（默认）1：停止 -->
+	<select id="getModifyStatueByUsername" parameterType="Users" resultType="Integer">
+		SELECT modifyStatus FROM role 
+		WHERE id IN(SELECT roleId FROM usersrole WHERE username=#{username}) AND roleName LIKE CONCAT ('${roleName}','%')
+	</select>
+</mapper>

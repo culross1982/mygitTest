@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.FunctionDao">
+
+	<!-- 获取模块菜单 -->
+	<select id="getModuleFunctionList" parameterType="Authority" resultType="Function">
+		SELECT * FROM FUNCTION 
+		WHERE id IN (SELECT functionId FROM authority WHERE roleId=#{roleId}) AND parentId=0;
+	</select>
+
+	<!-- 获取各功能主菜单  parentId=（1:包材系统 2:QDS系统 3:系统设置）-->
+	<select id="getMenuFunctionList" parameterType="Authority" resultType="Function">
+		SELECT * FROM FUNCTION 
+		WHERE id IN (SELECT functionId FROM authority WHERE roleId=#{roleId}) AND parentId=#{parentId};
+	</select>
+	
+	<!-- 获取功能子菜单,注意：parentId=#{id} -->
+	<select id="getSubFunctionList" parameterType="Function" resultType="Function">
+		SELECT * FROM FUNCTION 
+		WHERE id IN (SELECT functionId FROM authority WHERE roleId=#{roleId}) AND parentId=#{id} and functionUrl is not null;
+	</select>
+</mapper>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.MaterialsDao">
+	
+	<!-- 材料清单 -->
+	<select id="materialsList" resultType="Materials">
+		select *,(SELECT u.realname FROM users u WHERE m.createdBy=u.id) AS createdByUsername,
+				 (SELECT u.realname FROM users u WHERE m.modifyBy=u.id) AS modifyByUsername,
+				 (select c.materialsCategoryName from materialsCategory c where c.id=m.materialsCategoryNameId) as materialsCategoryName
+		from materials m		 			
+		where 1=1 
+		<if test="materialsName!=null and materialsName!=''">and m.materialsName like concat ('%',#{materialsName},'%')</if> 
+		order by m.id desc limit #{beginNo},#{pageSize}
+	</select>
+	
+	<!-- 材料总数 -->
+	<select id="countMaterials" resultType="int">
+		select count(*) from materials where 1=1 
+		<if test="materialsName!=null and materialsName!=''">and materialsName like concat ('%',#{materialsName},'%')</if>
+	</select>
+	
+	<!-- 手动增加材料 -->
+	<insert id="addMaterialsMT" parameterType="Materials">
+		insert into materials value(null,#{materials.materialsName},#{materials.materialsNum},
+									#{materials.materialsCategoryNameId},#{materials.createdBy},now(),null,null)
+	</insert>
+	
+	<!-- 根据id删除材料信息 -->
+	<delete id="doDelMaterials">
+		delete from materials where id=#{id}
+	</delete>
+	
+	<!-- 修改材料信息 -->
+	<update id="updateMaterials" parameterType="materials">
+		update materials set materialsName=#{materials.materialsName},
+							 materialsNum=#{materials.materialsNum},
+							 materials.materialsCategoryNameId=#{materials.materialsCategoryNameId},
+							 materials.modifyBy=#{materials.modifyBy},
+							 materials.modifyDate=now() where materials.id=#{materials.id}
+	</update>
+	
+	<!-- 根据id查找单个材料 -->
+	<select id="getMaterialsById" resultType="materials">
+		select *,(select materialsCategoryName from materialsCategory c where c.id=m.materialsCategoryNameId) as materialsCategoryName
+		 from materials m where id=#{id}
+	</select>
+	
+	<!-- 根据materialsName查找单个材料 -->
+	<select id="getMaterialsByName" resultType="materials">
+		select *,(select materialsCategoryName from materialsCategory c where c.id=m.materialsCategoryNameId) as materialsCategoryName
+		 from materials m where materialsName=#{materialsName}
+	</select>
+	
+	<!-- 材料入库 -->
+	<update id="warehouseIn">
+		update materials set materialsNum=materialsNum+#{inNum},modifyDate=now(),modifyBy=#{modifyBy} where id=#{id}
+	</update>
+	
+	<!-- 查询所有材料名称 -->
+	<select id="getAllMaterials" resultType="Materials">
+		select * from materials order by materialsName
+	</select>
+	
+	<!-- 根据id查找相应材料的库存数量 -->
+	<select id="getMaterialsNumById" resultType="int">
+		select materialsNum from materials where id=#{id}
+	</select>
+	
+	<!-- 材料出库 -->
+	<update id="warehouseOut">
+		update materials set materialsNum=materialsNum-#{inNum},modifyDate=now(),modifyBy=#{modifyBy} where id=#{id}
+	</update>
+	
+	<!-- 根据材料名称查询材料库存数量 -->
+	<select id="getMaterialsNumByName" resultType="Integer">
+		select materialsNum from materials where materialsName=#{materialsName}
+	</select>
+	
+	<!-- 使用包材，更新包材数量 -->
+	<update id="updataMaterialsNumByName">
+		update materials set materialsNum=#{materialsNum},modifyDate=now(),modifyBy=#{modifyBy} where materialsName=#{materialsName}
+	</update>
+	
+	<!-- 根据包材名称查id -->
+	<select id="findIdByMaterialsName" resultType="int">
+		select id from materials where materialsName=#{materialsName}
+	</select>
+	
+	<!-- 根据id修改包材数量 -->
+	<update id="updateMaterialsNumById" parameterType="int">
+		UPDATE materials SET materialsNum=materialsNum+(SELECT materialsChangeNum FROM materialshistory WHERE id=#{id}) 
+		WHERE id=(SELECT materialsId FROM materialshistory WHERE id=#{id}) 
+	</update>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.qds.ModuleDao">
+	
+	<!-- 按条件查询QDS基础数据 -->
+	<select id="getQProModule" resultType="QdsModule" parameterType="QdsModule">
+		SELECT *,(SELECT realName FROM users WHERE id=m.createBy) AS realName FROM qdsModule m WHERE 1=1
+		<if test="module!=null and module!=''">and m.module like concat ('%',#{module},'%')</if>
+		<if test="part!=null and part!=''">and m.part like concat ('%',#{part},'%')</if>
+		and m.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) 
+		order by id desc limit #{beginNo},#{pageSize}
+	</select>
+	
+	<!-- 按条件查询QDS基础数据总数 -->
+	<select id="getQProModuleCount" resultType="int" parameterType="QdsModule">
+		select count(*) from qdsModule m where 1=1
+		<if test="module!=null and module!=''">and m.module like concat ('%',#{module},'%')</if>
+		<if test="part!=null and part!=''">and m.part like concat ('%',#{part},'%')</if>
+		and m.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) 
+	</select>
+	
+	<!-- 新增基础数据 -->
+	<insert id="addQModule" parameterType="QdsModule">
+		INSERT INTO qdsModule VALUE (NULL,#{module},#{ver},#{part},#{category},NOW(),#{createBy},#{qdsProCategoryId}); 
+	</insert>
+	
+	<!-- 查询是否有指定模块型号 -->
+	<select id="searchModule" resultType="QdsModule" parameterType="QdsModule">
+		select * from qdsModule m where 1=1 
+		<if test="module!=null and module!=''">and m.module=#{module} </if>
+		<if test="part!=null and part!=''">and m.part=#{part}</if>
+		and m.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) group by ver
+	</select>
+	
+	<!-- 根据id删除指定基础数据 -->
+	<delete id="delModule" parameterType="int">
+		delete from qdsModule where id=#{id}
+	</delete>
+	
+	<!-- 根据module获取ver -->
+	<select id="getVerByModule" resultType="String">
+		select ver from qdsModule m
+		where module=#{module} and m.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) group by ver
+	</select>
+</mapper>

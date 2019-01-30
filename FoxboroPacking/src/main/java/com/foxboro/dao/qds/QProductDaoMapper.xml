@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.qds.QProductDao">
+	
+	<!-- 根据moduelNo查询是否存在product -->
+	<select id="isExsitProductByModuleNo" resultType="Integer">
+		SELECT COUNT(*) FROM qdsProduct AS p WHERE p.moduleNo LIKE CONCAT (#{moduleNo},'%') AND p.qdsProCategoryId=(SELECT id FROM qdsProCategory WHERE qdsProCategoryName=#{qdsProCategoryName});
+	</select>
+	
+	<!-- 新增QDS产品 -->
+	<insert id="addProduct" parameterType="QdsProduct">
+		INSERT INTO qdsProduct VALUE (NULL,#{moduleNo},0,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,0,0,NULL,0,#{qdsProductOrderId},#{qdsProCategoryId})
+	</insert>
+	
+	<!-- 根据id删除对应的产品 -->
+	<delete id="delProduct" parameterType="int">
+		delete from qdsProduct where qdsProductOrderId=#{id}
+	</delete>
+	
+	<!-- 按条件查询QDS产品 -->
+	<select id="getQdsProduct" parameterType="QdsProduct" resultType="QdsProduct">
+		SELECT *,(select c.qdsProCategoryName from qdsProCategory c where c.id=p.qdsProCategoryId) as qdsProCategoryName,
+		(select o.order from qdsProductOrder o where o.id=p.qdsProductOrderId) as `order` FROM qdsProduct p WHERE 1=1
+		<if test="moduleNo!=null and moduleNo!=''">and p.moduleNo like concat ('%',#{moduleNo},'%')</if>
+		order by id desc limit #{beginNo},#{pageSize}
+	</select>
+	
+	<!-- 按条件查询QDS产品总数 -->
+	<select id="getQdsProductCount" resultType="int" parameterType="QdsProduct">
+		select count(*) from qdsProduct p where 1=1
+		<if test="moduleNo!=null and moduleNo!=''">and p.moduleNo like concat ('%',#{moduleNo},'%')</if> 
+	</select>
+</mapper>

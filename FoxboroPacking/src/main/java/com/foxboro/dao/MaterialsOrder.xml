@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.MaterialsOrderDao">
+	
+	<!-- 增加订购包材 -->
+	<insert id="addMaterialsOrder" parameterType="MaterialsOrder">
+		insert into materialsOrder value 
+		(null,#{pwd},#{pwdQuantity},#{materialsName},#{materialsNum},#{materialsCategoryName},#{orderBy},now(),#{code},#{margin})
+	</insert>
+	
+	<!-- 根据材料名称判断订购表单里是否有此材料 -->
+	<select id="materialsIsExsit" parameterType="String" resultType="int">
+		select count(*) from materialsOrder where materialsName=#{materialsName}
+	</select>
+	
+	<!-- 根据材料名称修改数量 -->
+	<update id="updateMaterialsOrder">
+		update materialsOrder set materialsNum=materialsNum+#{num} where materialsName=#{name}
+	</update>
+</mapper>

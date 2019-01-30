@@ -1,0 +1,28 @@
+.daterange i {
+	position: absolute;
+	bottom: 10px;
+	right: -120px;
+	top: auto;
+	cursor: pointer;
+}
+
+.daterange {
+	position: relative;
+}
+
+#input_mask input{
+	width:200px;
+	text-transform: uppercase;
+}
+
+#input_mask span{
+	text-align: left;
+}
+
+.glyphicon-remove{
+	color:#d9534f;
+}
+
+.glyphicon-ok{
+	color:#3dcd58;
+}

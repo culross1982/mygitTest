@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+			  			http://www.springframework.org/schema/context 
+						http://www.springframework.org/schema/context/spring-context-3.1.xsd
+						http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+						http://www.springframework.org/schema/aop 
+						http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+	<!-- 1.配置数据源 -->	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:database.properties"/>
+	</bean>	
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${driver}"/>
+		<property name="url" value="${url}"/>
+		<property name="username" value="${username}"/>
+		<property name="password" value="${password}"/>
+		<property name="initialSize" value="${initialSize}"/><!-- 池启动时创建的连接数量 -->
+		<property name="maxActive" value="${maxActive}"/><!-- 同一时间可以从池分配的最多连接数量。设置为0时表示无限制。 -->
+		<property name="maxIdle" value="${maxIdle}"/> <!-- 池里不会被释放的最多空闲连接数量。设置为0时表示无限制。 -->
+		<property name="minIdle" value="${minIdle}"/><!-- 在不新建连接的条件下，池中保持空闲的最少连接数。 -->
+        <property name="removeAbandoned" value="${removeAbandoned}" /><!-- 设置自动回收超时连接 -->  
+        <property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}"/><!-- 自动回收超时时间(以秒数为单位) -->  
+        <property name="logAbandoned" value="${logAbandoned}"/><!-- 设置在自动回收超时连接的时候打印连接的超时错误  --> 
+		<property name="maxWait" value="${maxWait}"/><!-- 等待超时以毫秒为单位，在抛出异常之前，池等待连接被回收的最长时间（当没有可用连接时）。设置为-1表示无限等待。  -->
+		<!-- sql 心跳 -->
+			<property name= "testWhileIdle" value="true"/>
+			<property name= "testOnBorrow" value="false"/>
+			<property name= "testOnReturn" value="false"/>
+			<property name= "validationQuery" value="select 1"/>
+			<property name= "timeBetweenEvictionRunsMillis" value="60000"/>
+			<property name= "numTestsPerEvictionRun" value="${maxActive}"/>
+	</bean>
+	<!-- mybatis-spring 配置 结束 -->
+	
+	<!-- redis配置 -->
+ 	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+ 		<property name="maxActive" value="90"/>	<!-- 最大活动数 -1表示不限制-->
+ 		<property name="maxIdle" value="5"/>	<!-- jedis实例最大空闲值 -->
+ 		<property name="maxWait" value="1000"/> <!-- 最大等待时间 -->
+ 		<property name="testOnBorrow" value="true"/>	
+ 	</bean>
+ 	<bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="destroy"> <!-- destroy:jedis销毁时所需执行的方法 -->
+ 		<constructor-arg ref="jedisPoolConfig"/>
+ 		<constructor-arg value="127.0.0.1"/>
+ 		<constructor-arg value="6379"/>
+ 	</bean>
+	<bean id="redisAPI" class="com.foxboro.tools.RedisAPI">
+		<property name="jedisPool" ref="jedisPool"/>
+	</bean>
+	
+	
+	<!-- 事务管理   -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+    	<property name="dataSource" ref="dataSource"/>  <!--对数据库进行事务管理 -->
+ 	</bean>
+ 	
+ 	<!-- 2.配置sqlSessionFactoryBean -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+	</bean>
+	
+	<!-- AOP 事务处理 开始 -->    
+		<aop:aspectj-autoproxy />
+		<aop:config  proxy-target-class="true">  
+			<aop:pointcut expression="execution(* *com.foxboro.service..*(..))" id="transService"/>
+			<aop:advisor pointcut-ref="transService" advice-ref="txAdvice" />
+		</aop:config> 
+		<tx:advice id="txAdvice" transaction-manager="transactionManager">  
+		    <tx:attributes>  
+		       <tx:method name="hl*"  propagation="REQUIRED" rollback-for="Exception"  />
+		    </tx:attributes>  
+		</tx:advice> 
+	<!-- AOP 事务处理 结束 -->
+	
+	<!-- 4.自动生成dao下‘所有’接口的实现类 -->
+	<!-- 作用是value="com.dao"下的所有接口都生成对应的实现类 -->
+	<!-- 扫描接口并自动查找DAO接口同包内的mapperSQL映射文件 -->
+	<!-- scan for mappers and let them be autowired -->  
+    <!-- Mapper接口所在包名，Spring会自动查找其下的Mapper -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+        <property name="basePackage" value="com.foxboro.dao" /> 
+    </bean>
+    
+ 	<!-- 开启注解式事务 -->
+ 	<!-- <tx:annotation-driven transaction-manager="transactionManager"/> -->
+ 	
+ 	
+</beans>

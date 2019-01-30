@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.MaterialsCategoryDao">
+	
+	<!-- 查询所有材料信息 -->
+	<select id="getMaterialsCategoryList" resultType="MaterialsCategory">
+		select * from materialsCategory
+	</select>
+	
+	<!-- 根据材料名称查类别名称 -->
+	<select id="getMaterialsCategoryByMaterialsName" parameterType="String" resultType="String">
+		select materialsCategoryName from materialsCategory where 
+			id=(select materialsCategoryNameId from materials where materialsName=#{materialsName}) 
+	</select>
+</mapper>

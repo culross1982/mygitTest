@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<!-- <properties resource="database.properties"/> -->
+	
+	<typeAliases>
+		<!-- <typeAlias type="entity.Emp" alias="Emp" /> -->  <!-- 方法一，不灵活-->
+		<package name="com.foxboro.entity" />		<!-- 方法二 -->
+	</typeAliases>
+	
+	<mappers>
+		<mapper resource="com/foxboro/dao/UsersDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/RoleDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/ProductDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/ProductCategoryDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/MaterialsDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/MaterialsCategoryDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/MaterialsHistoryDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/FunctionDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/UsersRoleDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/qds/ProductAssyDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/qds/ProductTestDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/MaterialsOrder.xml"/>
+		<mapper resource="com/foxboro/dao/qds/ModuleDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/qds/ErrorCodeMapper.xml"/>
+		<mapper resource="com/foxboro/dao/qds/ProductOrderDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/qds/QProductDaoMapper.xml"/>
+	</mappers>
+
+</configuration>
