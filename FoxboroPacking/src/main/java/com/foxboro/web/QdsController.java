@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -82,7 +83,7 @@ public class QdsController {
 			dateEnd=date[1].trim();
 		}	
 		//分页查询
-		String partNo=request.getParameter("partNo");
+		String moduleNo=request.getParameter("moduleNo");
 		String assyNo=request.getParameter("assyNo");
 		String realname=request.getParameter("realname");
 		if(realname!=null){
@@ -100,7 +101,7 @@ public class QdsController {
 		QdsProductAssy qProAssy=new QdsProductAssy();
 		try {
 			int maxSize=Constants.maxSize;
-			qProAssy.setModuleNo(partNo);
+			qProAssy.setModuleNo(moduleNo);
 			qProAssy.setAssyNo(assyNo);
 			qProAssy.setRealname(realname);
 			qProAssy.setDateStart(dateStart);
@@ -146,33 +147,37 @@ public class QdsController {
 			model.addAttribute("count", page.getCount());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			log.error("/dateAsc error");
+			e.printStackTrace();
 		}
 		return "qds/qDinAssy";
 	}
 
-	//新增卡件串号
-	@RequestMapping(value="/dinAddPartNo.ajax",method=RequestMethod.POST)
+	//新增模块串号检查
+	@RequestMapping(value="/dinAddModuleNo.ajax",method=RequestMethod.POST)
 	@ResponseBody
-	public Object addPartNo(String partNo){
+	public Object addPartNo(String moduleNo,int qdsProCategoryId){
 		Map<String,String> result=new HashMap<String,String>();
 		try {
-			if(partNo==null || partNo.equals("")){
+			if(moduleNo==null || moduleNo.equals("")){
 				result.put("data", "empty") ;	//输入为空
-			}else if(partNo.length()!=19){
+			}else if(moduleNo.length()!=19){
 				result.put("data", "lengthError") ;	//长度错误
 			}else{
-				partNo=partNo.toUpperCase();
-				if(partNo.indexOf("O")>-1 || partNo.indexOf("I")>-1){
+				if(moduleNo.indexOf("o")>-1 || moduleNo.indexOf("i")>-1){
 					result.put("data", "incorrect");	//数据不合格
 				}else{
 					QdsProductAssy qProAssy=new QdsProductAssy();
-					qProAssy.setModuleNo(partNo);
+					qProAssy.setModuleNo(moduleNo.toUpperCase());	//输入信息转大写再上传
 					int count=qdsProAssySer.getAssyDataIsExsit(qProAssy);
-					if(count!=0){
-						result.put("data", "exsit");	//数据已存在
+					if(count==2){	//装配数据已存在！
+						result.put("data", "exsit");
+					}else if(count==1){	//已有部分装配数据！
+						String assyNo=qdsProAssySer.getAssyNoByModuleNo(moduleNo,qdsProCategoryId);
+						result.put("data", assyNo);
+					}else if(count==0){	//数据合格，可以添加
+						result.put("data", "success");	
 					}else{
-						result.put("data", "success");	//数据合格，可以添加
+						result.put("data", "moreCount");	
 					}
 				}
 			}
@@ -183,10 +188,10 @@ public class QdsController {
 		return result;
 	}
 
-	//新增部件串号
+	//新增单板串号检查
 	@RequestMapping(value="/dinAddAssyNo.ajax",method=RequestMethod.POST)
 	@ResponseBody
-	public Object addAssyNo(String assyNo){
+	public Object addAssyNo(String assyNo,int qdsProCategoryId,String moduleNo){
 		Map<String,String> result=new HashMap<String,String>();
 		try {
 			if(assyNo==null || assyNo.equals("")){
@@ -194,13 +199,25 @@ public class QdsController {
 			}else if(assyNo.length()!=12){
 				result.put("data", "lengthError") ;	//长度错误
 			}else{
-				QdsProductAssy qProAssy=new QdsProductAssy();
-				qProAssy.setAssyNo(assyNo.toUpperCase());
-				int count=qdsProAssySer.getAssyDataIsExsit(qProAssy);
-				if(count!=0){
-					result.put("data", "exsit");	//数据已存在
+				String part=assyNo.substring(0, 8);
+				//从基础数据获取单板串号对应的模块串号及其版本
+				QdsModule qdsModule=moduleSer.getModuleByPart(part, qdsProCategoryId);
+				if(qdsModule!=null){	//有对应的基础数据
+					String moduleNoDatabase=qdsModule.getModule()+qdsModule.getVer();
+					if(moduleNoDatabase.equals(moduleNo.substring(0, 9))){ //基础数据和输入数据比较是否相同
+						QdsProductAssy qProAssy=new QdsProductAssy();
+						qProAssy.setAssyNo(assyNo.toUpperCase());
+						int count=qdsProAssySer.getAssyDataIsExsit(qProAssy);
+						if(count!=0){
+							result.put("data", "exsit");	//数据已存在
+						}else{
+							result.put("data", "success");	//数据合格，可以添加
+						}
+					}else{
+						result.put("data", "databaseError");	//check基础数据错误
+					}
 				}else{
-					result.put("data", "success");	//数据合格，可以添加
+					result.put("data", "databaseEmpty");	//无对应的基础数据
 				}
 			}
 		} catch (Exception e) {
@@ -221,15 +238,19 @@ public class QdsController {
 				Users currentUser=(Users) session.getAttribute("user");
 				qdsProductAssy.setAssyBy(currentUser.getId());
 				JSONObject assyObject=JSON.parseObject(assy);
-				String partNo=assyObject.getString("partNo");
+				String moduleNo=assyObject.getString("moduleNo");
 				String assyNoP=assyObject.getString("assyNoP");
-				qdsProductAssy.setModuleNo(partNo.toUpperCase());
-				qdsProductAssy.setAssyNo(assyNoP.toUpperCase());
+				qdsProductAssy.setModuleNo(moduleNo.toUpperCase());
 				qdsProductAssy.setQdsProCategoryId(qdsProCategoryId); 
-				qdsProAssySer.addAssyData(qdsProductAssy);	//新增P板数据
+				if(assyNoP!=null){	//已有部分装配数据
+					qdsProductAssy.setAssyNo(assyNoP.toUpperCase());
+					qdsProAssySer.addAssyData(qdsProductAssy);	//新增P板数据	
+				}
 				String assyNoM=assyObject.getString("assyNoM");
 				qdsProductAssy.setAssyNo(assyNoM.toUpperCase());
 				qdsProAssySer.addAssyData(qdsProductAssy);	//新增M板数据
+				int assyStatus=1; //1为装配数据已PASS
+				qProductService.updateAssyStatusQdsProductByModuleNo(moduleNo, assyStatus);	//改变QdsPruduct的assyStatus
 				result.put("result", "success");
 			}
 			catch (Exception e) {
@@ -245,11 +266,13 @@ public class QdsController {
 	//按id删除装配数据
 	@RequestMapping(value="/delAssyDataById.ajax",method=RequestMethod.POST)
 	@ResponseBody
-	public Object delAssyDataById(int id){
+	public Object delAssyDataById(int id,String moduleNo){
 		Map<String,String> result=new HashMap<String,String>();
-		if(id!=0){
+		if(moduleNo!=null){
 			try {
 				qdsProAssySer.delAssyDataById(id);
+				int assyStatus=0; //0为装配数据fail
+				qProductService.updateAssyStatusQdsProductByModuleNo(moduleNo, assyStatus);	//改变QdsPruduct的assyStatus
 				result.put("result", "success");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -269,7 +292,7 @@ public class QdsController {
 		if(assyModify!=null && assyModify!=""){
 			try {
 				JSONObject assyModifyObject=JSON.parseObject(assyModify);	//转换json
-				String partNoModify=assyModifyObject.getString("partNoModify");
+				String partNoModify=assyModifyObject.getString("moduleNoModify");
 				String assyNoModify=assyModifyObject.getString("assyNoModify");
 				int id=assyModifyObject.getInteger("id");
 				QdsProductAssy qProAssy=new QdsProductAssy();
@@ -848,32 +871,50 @@ public class QdsController {
 	}
 	
 	//历史数据界面
-		@RequestMapping(value="/dinHistoryWindows",method=RequestMethod.GET)
-		public String dinHistoryWindows(Model model,HttpServletRequest request,Integer currentPage){
-			//分页查询
-			String moduleNo=request.getParameter("moduleNo");
-			if(currentPage==null){
-				currentPage=1;
-			}
-			List<QdsProduct> qdsProductList=new ArrayList<QdsProduct>();
-			QdsProduct qdsProduct=new QdsProduct();
-			try {
-				int maxSize=Constants.maxSize;
-				qdsProduct.setModuleNo(moduleNo);
-				qdsProduct.setBeginNo((currentPage-1)*maxSize);
-				qdsProduct.setPageSize(maxSize);
-				int count = qProductService.getQdsProductCount(qdsProduct);	//QDS产品总数
-				Page page=Constants.page(currentPage, count);	//分页
-				qdsProductList=qProductService.getQdsProduct(qdsProduct);	//QDS产品清单
-				model.addAttribute("qdsProductList",qdsProductList);
-				model.addAttribute("currentPage", page.getCurrentPage());
-				model.addAttribute("pageCount", page.getPageCount());
-				model.addAttribute("count", page.getCount());
-				model.addAttribute("qdsProduct",qdsProduct);	//回显
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return "qds/qDinHistory";
+	@RequestMapping(value="/dinHistoryWindows",method=RequestMethod.GET)
+	public String dinHistoryWindows(Model model,HttpServletRequest request,Integer currentPage){
+		//分页查询
+		String moduleNo=request.getParameter("moduleNo");
+		if(currentPage==null){
+			currentPage=1;
 		}
+		List<QdsProduct> qdsProductList=new ArrayList<QdsProduct>();
+		QdsProduct qdsProduct=new QdsProduct();
+		try {
+			int maxSize=Constants.maxSize;
+			qdsProduct.setModuleNo(moduleNo);
+			qdsProduct.setBeginNo((currentPage-1)*maxSize);
+			qdsProduct.setPageSize(maxSize);
+			int count = qProductService.getQdsProductCount(qdsProduct);	//QDS产品总数
+			Page page=Constants.page(currentPage, count);	//分页
+			qdsProductList=qProductService.getQdsProduct(qdsProduct);	//QDS产品清单
+			model.addAttribute("qdsProductList",qdsProductList);
+			model.addAttribute("currentPage", page.getCurrentPage());
+			model.addAttribute("pageCount", page.getPageCount());
+			model.addAttribute("count", page.getCount());
+			model.addAttribute("qdsProduct",qdsProduct);	//回显
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "qds/qDinHistory";
+	}
+	
+	//历史详情
+	@RequestMapping(value="/detailHistory.ajax",method=RequestMethod.POST)
+	@ResponseBody
+	public Object detailHistory(Model model,Integer id){
+		Map<String,String> result=new HashMap<String,String>();
+		QdsProduct qdsProduct=new QdsProduct();
+		try {
+			qdsProduct=qProductService.getQdsProductById(id);
+			String fastjson=JSON.toJSONString(qdsProduct);
+			result.put("result", fastjson);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result.put("result", "failed");
+		}
+		return result;
+	}
 }

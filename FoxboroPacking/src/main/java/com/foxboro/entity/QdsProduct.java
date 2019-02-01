@@ -16,7 +16,7 @@ public class QdsProduct extends Base{
 	private Date testTime;
 	private String testEquipment;
 	private String testDiscription;
-	private int testErrorCode;
+	private int errorStatus;
 	private int inspectionBy;
 	@DateTimeFormat(pattern="yyyy-MM-hh HH:mm:ss")
 	private Date inspectionTime;
@@ -105,11 +105,11 @@ public class QdsProduct extends Base{
 	public void setTestDiscription(String testDiscription) {
 		this.testDiscription = testDiscription;
 	}
-	public int getTestErrorCode() {
-		return testErrorCode;
+	public int getErrorStatus() {
+		return errorStatus;
 	}
-	public void setTestErrorCode(int testErrorCode) {
-		this.testErrorCode = testErrorCode;
+	public void setErrorStatus(int errorStatus) {
+		this.errorStatus = errorStatus;
 	}
 	public int getInspectionBy() {
 		return inspectionBy;

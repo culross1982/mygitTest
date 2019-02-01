@@ -50,4 +50,20 @@ public interface QProductDao {
 	 * @return
 	 */
 	public int getQdsProductCount(QdsProduct qdsProduct) throws Exception;
+	
+	/**
+	 * 根据id获取单条QdsProduct记录
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public QdsProduct getQdsProductById(int id) throws Exception;
+	
+	/**
+	 * 根据moduleNo修改对应的assyStatus
+	 * @param moduleNo
+	 * @throws Exception
+	 */
+	public void updateAssyStatusQdsProductByModuleNo(@Param("moduleNo") String moduleNo,
+													 @Param("assyStatus") int assyStatus) throws Exception;
 }

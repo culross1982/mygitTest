@@ -68,5 +68,20 @@ public interface ProductAssyService {
 	 */
 	public void updateProductAssy(QdsProductAssy qProAssy)throws Exception;
 	
+	/**
+	 * 按moduleNo查询QDS装配产品的单板个数
+	 * @param moduleNo
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exception
+	 */
+	public int getQProAssyCountByModuleNo(String moduleNo,int qdsProCategoryId) throws Exception;
 	
+	/**
+	 * 按moduleNo查询对应的assyNo
+	 * @param moduleNo
+	 * @return
+	 * @throws Exception
+	 */
+	public String getAssyNoByModuleNo(String moduleNo,int qdsProCategoryId) throws Exception;
 }

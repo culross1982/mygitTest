@@ -2,6 +2,8 @@ package com.foxboro.service.qds;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.foxboro.entity.QdsProduct;
 
 public interface QProductService {
@@ -47,4 +49,19 @@ public interface QProductService {
 	 * @return
 	 */
 	public int getQdsProductCount(QdsProduct qdsProduct) throws Exception;
+	
+	/**
+	 * 根据id获取单条QdsProduct记录
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public QdsProduct getQdsProductById(int id) throws Exception;
+	
+	/**
+	 * 根据moduleNo修改对应的assyStatus
+	 * @param moduleNo
+	 * @throws Exception
+	 */
+	public void updateAssyStatusQdsProductByModuleNo(String moduleNo,int assyStatus) throws Exception;
 }

@@ -31,4 +31,14 @@
 		select count(*) from qdsProduct p where 1=1
 		<if test="moduleNo!=null and moduleNo!=''">and p.moduleNo like concat ('%',#{moduleNo},'%')</if> 
 	</select>
+	
+	<!-- 根据id获取单条QdsProduct记录 -->
+	<select id="getQdsProductById" resultType="QdsProduct">
+		select * from qdsProduct where id=#{id}
+	</select>
+	
+	<!-- 根据moduleNo修改对应的assyStatus -->
+	<update id="updateAssyStatusQdsProductByModuleNo">
+		update qdsProduct set assyStatus=#{assyStatus} where moduleNo=#{moduleNo}
+	</update>
 </mapper>

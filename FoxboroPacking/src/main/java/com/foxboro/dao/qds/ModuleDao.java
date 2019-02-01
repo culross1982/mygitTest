@@ -57,4 +57,14 @@ public interface ModuleDao {
 	public String getVerByModule(@Param("module") String module,
 								 @Param("qdsProCategoryName") String qdsProCategoryName) throws Exception;
 	
+	/**
+	 * 根据part获取module
+	 * @param part
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exception
+	 */
+	public QdsModule getModuleByPart(@Param("part") String part,
+								 @Param("qdsProCategoryId") int qdsProCategoryId) throws Exception;
+	
 }

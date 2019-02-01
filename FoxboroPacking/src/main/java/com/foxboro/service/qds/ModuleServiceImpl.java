@@ -55,4 +55,11 @@ public class ModuleServiceImpl implements ModuleService {
 		return moduleDao.getVerByModule(module,qdsProCategoryName);
 	}
 
+	//根据part获取module
+	@Override
+	public QdsModule getModuleByPart(String part, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return moduleDao.getModuleByPart(part, qdsProCategoryId);
+	}
+
 }

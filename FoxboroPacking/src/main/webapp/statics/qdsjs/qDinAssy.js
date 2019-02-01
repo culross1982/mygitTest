@@ -65,24 +65,24 @@ $("#addDinAssy").click(function () {
 
 //重置窗口
 function resetModal(){
-	setTimeout(function(){$("#partNo").val("");	
+	setTimeout(function(){$("#moduleNo").val("");	
 	$("#assyNoP").val("");
 	$("#assyNoM").val("");
-	$("#partNo").next().html("");
+	$("#moduleNo").next().html("");
 	$("#assyNoP").next().html("");
 	$("#assyNoM").next().html("");
-	$("#partNo").focus();},500);
+	$("#moduleNo").focus();},500);
 }
 
 /*新增界面的卡件串号*/
-/*$("#partNo").bind("change input",function(){
-//$("#partNo").change(function(){
+/*$("#moduleNo").bind("change input",function(){
+//$("#moduleNo").change(function(){
 	var obj=$(this);
-	var partNo=obj.val();
+	var moduleNo=obj.val();
 	obj.next().html("串号重复，请重输");
 	$.ajax({
-		url:'dinAddPartNo.ajax',
-		data:{'partNo':partNo},
+		url:'dinAddmoduleNo.ajax',
+		data:{'moduleNo':moduleNo},
 		dataType:'json',
 		type:'post',
 		success:function(result){
@@ -102,7 +102,7 @@ function resetModal(){
 				obj.next().css("color","#3DCD58");
 				obj.next().html("pass");
 				$("#assyNoP").focus();
-				//alert("partNo");
+				//alert("moduleNo");
 			}
 		},
 		error:function(){
@@ -113,27 +113,27 @@ function resetModal(){
 })*/
 
 /*新增界面的卡件串号*/
-$("#partNo").bind("change input",function(){
+$("#moduleNo").bind("change input",function(){
 	var obj=$(this);
-	var result=partNoCheck(obj);
+	var result=moduleNoCheck(obj);
 	if(result=="true"){		//返回结果为ture则光标指向下一栏
 		$("#assyNoP").focus();
 	}
 })
 
 /*修改界面的卡件串号*/
-$("#partNoModify").bind("change input",function(){
+$("#moduleNoModify").bind("change input",function(){
 	var obj=$(this);
-	partNoCheck(obj);
+	moduleNoCheck(obj);
 })
 
 /*卡件串号检查通用方法*/
-function partNoCheck(obj){
+function moduleNoCheck(obj){
 	var objResult=new Object;	//定义返回结果
-	var partNo=obj.val();
+	var moduleNo=obj.val();
 	$.ajax({
-		url:'dinAddPartNo.ajax',
-		data:{'partNo':partNo},
+		url:'dinAddmoduleNo.ajax',
+		data:{'moduleNo':moduleNo},
 		dataType:'json',
 		type:'post',
 		async:false,
@@ -287,10 +287,10 @@ $("#addAssyDataBtn").click(function(){
 /*提交新增*/
 function doAdd(){
 	var assy=new Object;
-	assy.partNo=$("#partNo").val();
+	assy.moduleNo=$("#moduleNo").val();
 	assy.assyNoP=$("#assyNoP").val();
 	assy.assyNoM=$("#assyNoM").val();
-	if($("#assyNoM").next().html()=="pass" && $("#assyNoP").next().html()=="pass" && $("#partNo").next().html()=="pass"){
+	if($("#assyNoM").next().html()=="pass" && $("#assyNoP").next().html()=="pass" && $("#moduleNo").next().html()=="pass"){
 		$.ajax({
 			url:"dinDoAddAssy.ajax",
 			data:{"assy":JSON.stringify(assy)},
@@ -352,7 +352,7 @@ $(".modifyDinAssy").click(function () {
 	var obj=$(this);
 	$('#modifyModal').modal();	//弹出窗口
 	//窗口载入数据
-	$("#partNoModify").val(obj.attr("partNo"));
+	$("#moduleNoModify").val(obj.attr("moduleNo"));
 	$("#assyNoModify").val(obj.attr("assyNo"));
 	$("#assyTimeModify").val(obj.attr("assyTime"));
 	$("#realnameModify").val(obj.attr("realname"));
@@ -362,7 +362,7 @@ $(".modifyDinAssy").click(function () {
 /*点击"修改"按钮进行修改*/
 $("#modifyDinAssyBtn").click(function(){
 	var assyModify=new Object();
-	assyModify.partNoModify=$("#partNoModify").val();
+	assyModify.moduleNoModify=$("#moduleNoModify").val();
 	assyModify.assyNoModify=$("#assyNoModify").val();
 	assyModify.id=$("#idModify").val();
 	

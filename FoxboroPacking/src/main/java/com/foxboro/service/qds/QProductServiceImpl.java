@@ -48,4 +48,18 @@ public class QProductServiceImpl implements QProductService {
 		return qProductDao.getQdsProductCount(qdsProduct);
 	}
 
+	//根据id获取单条QdsProduct记录
+	@Override
+	public QdsProduct getQdsProductById(int id) throws Exception {
+		// TODO Auto-generated method stub
+		return qProductDao.getQdsProductById(id);
+	}
+
+	//根据moduleNo修改对应的assyStatus
+	@Override
+	public void updateAssyStatusQdsProductByModuleNo(String moduleNo, int assyStatus) throws Exception {
+		// TODO Auto-generated method stub
+		qProductDao.updateAssyStatusQdsProductByModuleNo(moduleNo, assyStatus);
+	}
+
 }
