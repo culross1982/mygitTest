@@ -83,8 +83,8 @@
 												<c:if test="${p.assyStatus==1}"><i class="glyphicon glyphicon-ok"></i></c:if>
 											</td>
 											<td>
-												<c:if test="${p.testStatus==null || p.testStatus=='F'}"><i class="glyphicon glyphicon-remove"></i></c:if>
-												<c:if test="${p.testStatus=='P'}"><i class="glyphicon glyphicon-ok"></i></c:if>
+												<c:if test="${p.testStatus==0}"><i class="glyphicon glyphicon-remove"></i></c:if>
+												<c:if test="${p.testStatus==1}"><i class="glyphicon glyphicon-ok"></i></c:if>
 											</td>
 											<td>
 												<c:if test="${p.inspectionStatus==0}"><i class="glyphicon glyphicon-remove"></i></c:if>
@@ -162,13 +162,13 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label col-md-3">单板串号P</label>
+									<label class="control-label col-md-3">单板串号</label>
 									<div class="col-md-9 col-sm-9 col-xs-12">
 										<input name="assyNoP" id="assyNoP" type="text" class="form-control" disabled="disabled">
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label col-md-3">单板串号M</label>
+									<label class="control-label col-md-3">单板串号</label>
 									<div class="col-md-9 col-sm-9 col-xs-12">
 										<input name="assyNoM" id="assyNoM" type="text" class="form-control" disabled="disabled">
 									</div>

@@ -5,29 +5,55 @@
 	
 	<!-- 按条件查询QDS测试产品 -->
 	<select id="getQProTest" resultType="QdsProductTest" parameterType="QdsProductTest">
-		SELECT *,(SELECT realname FROM users WHERE id=t.testBy) AS realname FROM qdsProductTest t WHERE 1=1
-		<if test="testNo!=null and testNo!=''">and t.testNo like concat ('%',#{testNo},'%')</if>
+		SELECT *,(SELECT realname FROM users WHERE id=t.testBy) AS realname,
+				 (select errorCodeId from qdsProductError where qdsProductTestId=t.id) as errorCodeId,
+				 (select remark from qdsProductError where qdsProductTestId=t.id) as remark
+		FROM qdsProductTest t 
+		WHERE t.qdsProCategoryId=#{qdsProCategoryId}
+		<if test="moduleNo!=null and moduleNo!=''">and t.moduleNo like concat ('%',#{moduleNo},'%')</if>
 		<if test="realname!=null and realname!=''">AND t.testBy IN (SELECT id FROM users WHERE realname LIKE CONCAT ('%',#{realname},'%'))</if>
 		<if test="dateStart!=null and dateEnd!=null and dateStart!='' and dateEnd!=''">
 		and DATE_FORMAT(t.testTime,'%Y-%m-%d') BETWEEN #{dateStart} AND #{dateEnd}
 		</if>
-		and t.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) 
 		order by id desc limit #{beginNo},#{pageSize}
 	</select>
 	
 	<!-- 按条件查询QDS测试产品总数 -->
 	<select id="getQProTestCount" resultType="int" parameterType="QdsProductTest">
-		select count(*) from qdsProductTest t where 1=1
-		<if test="testNo!=null and testNo!=''">and t.testNo like concat ('%',#{testNo},'%')</if>
+		select count(*) from qdsProductTest t where t.qdsProCategoryId=#{qdsProCategoryId}
+		<if test="moduleNo!=null and moduleNo!=''">and t.moduleNo like concat ('%',#{moduleNo},'%')</if>
 		<if test="realname!=null and realname!=''">AND t.testBy IN (SELECT id FROM users WHERE realname LIKE CONCAT ('%',#{realname},'%'))</if>
 		<if test="dateStart!=null and dateEnd!=null and dateStart!='' and dateEnd!=''">
 		and DATE_FORMAT(t.testTime,'%Y-%m-%d') BETWEEN #{dateStart} AND #{dateEnd}
 		</if>
-		and t.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) 
 	</select>
 	
 	<!-- 新增测试数据 -->
 	<insert id="addTestData" parameterType="QdsProductTest">
-		insert into qdsProductTest value (null,#{testNo},#{testCode},#{testStatus},#{status},#{testResult},#{testTime},#{testBy},#{testEquipment},#{discription},#{qdsProCategoryId})
+		insert into qdsProductTest value (null,#{moduleNo},#{testCode},#{testStatus},#{status},#{testResult},#{testBy},#{testTime},#{testEquipment},#{testDiscription},#{errorStatus},#{qdsProCategoryId})
 	</insert>
+	
+	<!-- 根据moduleNo查询最后一条记录是否为PASS -->
+	<select id="isTestPassAtTheEnd" resultType="String">
+		select testResult from qdsProductTest 
+		where qdsProCategoryId=#{qdsProCategoryId} and moduleNo=#{moduleNo} ORDER BY id desc LIMIT 1
+	</select>
+	
+	<!-- 根据moduleNo查询是否有记录为FAIL -->
+	<select id="isTestFailedByModuleNo" resultType="int">
+		select count(*) from qdsProductTest 
+		where qdsProCategoryId=#{qdsProCategoryId} and moduleNo=#{moduleNo}	and testResult='F'
+	</select>
+	
+	<!-- 设置PASS产品最后1条FAIL的记录的errorStauts为1，表示有维修记录待输入 -->
+	<update id="updateErrorStatusAtTheEnd">
+		UPDATE qdsProductTest SET errorStatus=1 
+		WHERE qdsProCategoryId=#{qdsProCategoryId} AND moduleNo=#{moduleNo} and testResult='F' ORDER BY id DESC LIMIT 1
+	</update>
+	
+	<!-- 根据id修改errorStatus -->
+	<update id="updateProductTestById">
+		update qdsProductTest set errorStatus=#{errorStatus} 
+		where qdsProCategoryId=#{qdsProCategoryId} and testResult='F' and id=#{id}
+	</update>
 </mapper>

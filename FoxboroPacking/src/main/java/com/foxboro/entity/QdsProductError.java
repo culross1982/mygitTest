@@ -11,7 +11,21 @@ public class QdsProductError extends Base{
 	@DateTimeFormat(pattern="yyyy-MM-hh HH:mm:ss")
 	private Date repairTime;
 	private String remark;
+	private int qdsProCategoryId;
+	private int qdsProductTestId;
 	
+	public int getQdsProductTestId() {
+		return qdsProductTestId;
+	}
+	public void setQdsProductTestId(int qdsProductTestId) {
+		this.qdsProductTestId = qdsProductTestId;
+	}
+	public int getQdsProCategoryId() {
+		return qdsProCategoryId;
+	}
+	public void setQdsProCategoryId(int qdsProCategoryId) {
+		this.qdsProCategoryId = qdsProCategoryId;
+	}
 	public String getModuleNo() {
 		return moduleNo;
 	}

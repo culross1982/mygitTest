@@ -5,12 +5,12 @@
 	
 	<!-- 根据moduelNo查询是否存在product -->
 	<select id="isExsitProductByModuleNo" resultType="Integer">
-		SELECT COUNT(*) FROM qdsProduct AS p WHERE p.moduleNo LIKE CONCAT (#{moduleNo},'%') AND p.qdsProCategoryId=(SELECT id FROM qdsProCategory WHERE qdsProCategoryName=#{qdsProCategoryName});
+		SELECT COUNT(*) FROM qdsProduct AS p WHERE p.moduleNo LIKE CONCAT (#{moduleNo},'%') AND p.qdsProCategoryId;
 	</select>
 	
 	<!-- 新增QDS产品 -->
 	<insert id="addProduct" parameterType="QdsProduct">
-		INSERT INTO qdsProduct VALUE (NULL,#{moduleNo},0,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,0,0,NULL,0,#{qdsProductOrderId},#{qdsProCategoryId})
+		INSERT INTO qdsProduct VALUE (NULL,#{moduleNo},0,0,0,NULL,0,#{qdsProductOrderId},#{qdsProCategoryId})
 	</insert>
 	
 	<!-- 根据id删除对应的产品 -->
@@ -41,4 +41,28 @@
 	<update id="updateAssyStatusQdsProductByModuleNo">
 		update qdsProduct set assyStatus=#{assyStatus} where moduleNo=#{moduleNo}
 	</update>
+	
+	<!-- 根据moduleNo修改对应的testStatus -->
+	<update id="updateTestStatusQdsProductByModuleNo">
+		update qdsProduct set testStatus=#{testStatus} where moduleNo=#{moduleNo}
+	</update>
+	
+	<!-- 按条件查询DQS中TestResult有值的产品 -->
+	<select id="getQdsProductWhereTestResult" parameterType="QdsProduct" resultType="QdsProduct">
+		SELECT *,(SELECT realName FROM users WHERE id=p.testBy) as realName FROM qdsProduct p 
+		(WHERE testResult='P' OR testResult='N')
+		<if test="moduleNo!=null and moduleNo!=''">and p.moduleNo like concat ('%',#{moduleNo},'%')</if>
+		order by id desc limit #{beginNo},#{pageSize}
+	</select>
+	
+	<!-- 按条件查询DQS中TestResult有值的产品 -->
+	<select id="getQdsProductCountWhereTestResult" resultType="int" parameterType="QdsProduct">
+		select count(*) from qdsProduct where (testResult='P' OR testResult='N')
+		<if test="moduleNo!=null and moduleNo!=''">and moduleNo like concat ('%',#{moduleNo},'%')</if> 
+	</select>
+	
+	<!-- 按moduleNo查看装配数据是否PASS -->
+	<select id="getAssyStatusByModuleNo" resultType="int">
+		select assyStatus from qdsProduct where moduleNo=#{moduleNo} and qdsProCategoryId=#{qdsProCategoryId}
+	</select>
 </mapper>

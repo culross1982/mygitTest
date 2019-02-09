@@ -178,6 +178,9 @@ function moduleNoCheck(obj){
 			}else if(result.data=="moreCount"){
 				obj.next().css("color","red");
 				obj.next().html("单板数据个数超范围");
+			}else if(result.data=="noexsitSn"){
+				obj.next().css("color","red");
+				obj.next().html("此串号未生成过！");
 			}else{
 				obj.next().css("color","#f0ad4e");
 				obj.next().html("已有部分装配数据！");

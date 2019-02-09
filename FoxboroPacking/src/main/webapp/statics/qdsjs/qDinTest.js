@@ -35,3 +35,4 @@ $(".daterange input").each(function() {
 		$(this).parent().find('input').click();
 	});
 });
+

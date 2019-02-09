@@ -21,13 +21,13 @@ $(".detailHistory").click(function(){
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label col-md-3">单板串号P</label>
+					<label class="control-label col-md-3">单板串号</label>
 					<div class="col-md-9 col-sm-9 col-xs-12">
 						<input name="assyNoP" id="assyNoP" type="text" class="form-control" disabled="disabled">
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label col-md-3">单板串号M</label>
+					<label class="control-label col-md-3">单板串号</label>
 					<div class="col-md-9 col-sm-9 col-xs-12">
 						<input name="assyNoM" id="assyNoM" type="text" class="form-control" disabled="disabled">
 					</div>

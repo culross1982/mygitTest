@@ -37,12 +37,14 @@ import com.foxboro.entity.QdsErrorCode;
 import com.foxboro.entity.QdsModule;
 import com.foxboro.entity.QdsProduct;
 import com.foxboro.entity.QdsProductAssy;
+import com.foxboro.entity.QdsProductError;
 import com.foxboro.entity.QdsProductOrder;
 import com.foxboro.entity.QdsProductTest;
 import com.foxboro.entity.Users;
 import com.foxboro.service.qds.ErrorCodeService;
 import com.foxboro.service.qds.ModuleService;
 import com.foxboro.service.qds.ProductAssyService;
+import com.foxboro.service.qds.ProductErrorService;
 import com.foxboro.service.qds.ProductOrderService;
 import com.foxboro.service.qds.QProductService;
 import com.foxboro.service.qds.ProductTestService;
@@ -64,6 +66,8 @@ public class QdsController {
 	private ProductOrderService productOrderService;
 	@Autowired
 	private QProductService qProductService;
+	@Autowired
+	private ProductErrorService productErrorService;
 
 	private int qdsProCategoryId=1;	//1表示产品分类为din
 	private String qdsProCategoryName="DIN";
@@ -168,17 +172,23 @@ public class QdsController {
 				}else{
 					QdsProductAssy qProAssy=new QdsProductAssy();
 					qProAssy.setModuleNo(moduleNo.toUpperCase());	//输入信息转大写再上传
-					int count=qdsProAssySer.getAssyDataIsExsit(qProAssy);
-					if(count==2){	//装配数据已存在！
-						result.put("data", "exsit");
-					}else if(count==1){	//已有部分装配数据！
-						String assyNo=qdsProAssySer.getAssyNoByModuleNo(moduleNo,qdsProCategoryId);
-						result.put("data", assyNo);
-					}else if(count==0){	//数据合格，可以添加
-						result.put("data", "success");	
-					}else{
-						result.put("data", "moreCount");	
+					Integer isExsitProduct=qProductService.isExsitProductByModuleNo(moduleNo, qdsProCategoryId);
+					if(isExsitProduct!=0){	//工作令中有此SN
+						int count=qdsProAssySer.getAssyDataIsExsit(qProAssy);
+						if(count==2){	//装配数据已存在！
+							result.put("data", "exsit");
+						}else if(count==1){	//已有部分装配数据！
+							String assyNo=qdsProAssySer.getAssyNoByModuleNo(moduleNo,qdsProCategoryId);
+							result.put("data", assyNo);
+						}else if(count==0){	//数据合格，可以添加
+							result.put("data", "success");	
+						}else{
+							result.put("data", "moreCount");	
+						}
+					}else{	//工作令中无此SN
+						result.put("data", "noexsitSn");
 					}
+
 				}
 			}
 		} catch (Exception e) {
@@ -328,7 +338,7 @@ public class QdsController {
 			dateEnd=date[1].trim();
 		}	
 		//分页查询
-		String testNo=request.getParameter("testNo");
+		String moduleNo=request.getParameter("moduleNo");
 		String realname=request.getParameter("realname");
 		if(realname!=null){
 			try {
@@ -342,24 +352,36 @@ public class QdsController {
 			currentPage=1;
 		}
 		List<QdsProductTest> qdsProductTestList=new ArrayList<QdsProductTest>();
+		//List<QdsProduct> qdsProductTestList=new ArrayList<QdsProduct>();
+		//QdsProduct qdsProduct=new QdsProduct();
 		QdsProductTest qProTest=new QdsProductTest();
 		try {
 			int maxSize=Constants.maxSize;
-			qProTest.setTestNo(testNo);
+			//qdsProduct.setModuleNo(moduleNo);
+			qProTest.setModuleNo(moduleNo);
 			qProTest.setRealname(realname);
+			/*qdsProduct.setDateStart(dateStart);
+			qdsProduct.setDateEnd(dateEnd);
+			qdsProduct.setBeginNo((currentPage-1)*maxSize);
+			qdsProduct.setPageSize(maxSize);*/
 			qProTest.setDateStart(dateStart);
 			qProTest.setDateEnd(dateEnd);
 			qProTest.setBeginNo((currentPage-1)*maxSize);
 			qProTest.setPageSize(maxSize);
-			qProTest.setQdsProCategoryName(qdsProCategoryName);
+			qProTest.setQdsProCategoryId(1);	//1为DIN
+			//int count=qProductService.getQdsProductCountWhereTestResult(qdsProduct);	//测试数据总数
 			int count = qdsProTestSer.getQProTestCount(qProTest);	//测试数据总数
 			Page page=Constants.page(currentPage, count);	//分页
+			//qdsProductTestList=qProductService.getQdsProductWhereTestResult(qdsProduct);	//测试数据清单
 			qdsProductTestList=qdsProTestSer.getQProTest(qProTest);	//测试数据清单
 			model.addAttribute("qdsProductTestList",qdsProductTestList);
 			model.addAttribute("currentPage", page.getCurrentPage());
 			model.addAttribute("pageCount", page.getPageCount());
 			model.addAttribute("count", page.getCount());
 			model.addAttribute("qProTest",qProTest);	//回显
+			List<QdsErrorCode> qdsErrorCodeList=new ArrayList<QdsErrorCode>();
+			qdsErrorCodeList=errorCodeService.getAllErrorCode();	//获取所有维修代码
+			model.addAttribute("qdsErrorCodeList",qdsErrorCodeList);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -383,15 +405,17 @@ public class QdsController {
 						attachment.transferTo(targetFile);
 						File file=new File("d:\\"+tempFileName);
 						Users currentUser=(Users) session.getAttribute("user");
-						int updateResult=attachmentToSave(file,currentUser.getId());	//调用上传方法
-						if(updateResult==1){	
-							//result.put("result", "success");	//上传成功
-							targetFile.delete(); //删除临时文件
-							out.print("<script>alert('数据上传成功！');window.location.href='dinTestWindows';</script>");
-						}else{
-							//result.put("result", "failed");	//上传失败
-							out.print("<script>alert('数据上传失败！');window.location.href='dinTestWindows';</script>");
+						HashMap<String,String> updateResultList=attachmentToSave(file,currentUser.getId());	//调用上传方法
+						String uploadFailed="";
+						String uploadCount="";
+						for(String updateResult:updateResultList.values()){
+							if(updateResult.length()==19){
+								uploadFailed=uploadFailed+updateResult+" | ";	//未成功上传的集合
+							}else{
+								uploadCount=updateResult;	//成功上传的条数
+							}
 						}
+						out.print("<script>alert('"+uploadCount+"条测试数据上传成功！"+uploadFailed+"无装配数据，上传失败！');window.location.href='dinTestWindows';</script>");
 					} catch (IllegalStateException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -414,9 +438,11 @@ public class QdsController {
 		//return result;
 	}
 
-	//本地文件信息上传至SQL
-	protected int attachmentToSave(File file,int testBy){
-		int result=0;
+	//本地文件信息上传至SQL（DIN）
+	protected HashMap<String,String> attachmentToSave(File file,int testBy){
+		//int result=0;
+		HashMap<String,String> resultMap=new HashMap<String,String>();
+		int resultCount=0;	//上传的成功条数
 		FileReader fr=null;
 		BufferedReader br=null;
 		//List<QdsProductTest> recoredList=new ArrayList<QdsProductTest>();
@@ -425,14 +451,15 @@ public class QdsController {
 			br=new BufferedReader(fr);
 			String sb=new String();
 			QdsProductTest recored=new QdsProductTest();
+			String moduleNo=null;	//存moduleNo
+			List<String> moduleNoList=new ArrayList<String>();	//存放moduleNo集合，用于：更新qdsProduct中testStatus的方法使用
+			int j=0;	//定义HashMap的key值
 			while((sb=br.readLine())!=null){	//获取每行信息
 				sb=sb.replace(" ", "");	//去掉所有空格
 				String[] str=sb.split("\\|");
-				for (String string : str) {
-					log.debug(string);
-				}
 				for (int i=0;i<str.length;i++) {
-					recored.setTestNo(str[0]+str[1]+str[2]);
+					moduleNo=str[0]+str[1]+str[2];
+					recored.setModuleNo(moduleNo);
 					recored.setTestCode(str[3]);
 					recored.setTestStatus(str[9]);
 					recored.setStatus(str[4]);
@@ -442,18 +469,36 @@ public class QdsController {
 					recored.setTestTime(sdf.parse(time));
 					recored.setTestBy(testBy);
 					recored.setTestEquipment(str[5]);
-					recored.setDiscription(str[10]);
-					recored.setQdsProCategoryId(qdsProCategoryId);
+					recored.setTestDiscription(str[10]);
+					recored.setErrorStatus(0);
 				}
+				int qdsProCategoryId=1;	//1为DIN
+				recored.setQdsProCategoryId(qdsProCategoryId);
+				Integer assyStatus;
 				try {
-					qdsProTestSer.addTestData(recored);	//将每条数据上传到SQL中
-					result=1;
-				} catch (Exception e) {
+					assyStatus=qProductService.getAssyStatusByModuleNo(moduleNo, qdsProCategoryId);//装配数据是否PASS
+					if(assyStatus==1){	//装配数据PASS
+						try {
+							qdsProTestSer.addTestData(recored);	//将每条数据上传到SQL中
+							moduleNoList.add(moduleNo);//将每条数据放入集合中，用于：更新qdsProduct中testStatus的方法使用
+							resultCount++;
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}else{	//装配数据FAIL
+						j++;	//HashMap的key值
+						resultMap.put(String.valueOf(j), moduleNo);	//存入装配数据FAIL的值
+						//resultList.add(moduleNo);
+					}
+				} catch (Exception e1) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
-					result=0;
+					j++;	//HashMap的key值
+					resultMap.put(String.valueOf(j), moduleNo);	//存入未生成SN的moduleNo
 				}
 			}
+			resultMap.put("resultCount",String.valueOf(resultCount));	//上传的成功条数存入结果集中
+			updateQdsProTestStatus(moduleNoList);	//调用更新qdsProduct中testStatus的方法
 		}catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -472,7 +517,62 @@ public class QdsController {
 				e.printStackTrace();
 			}
 		}
-		return result;
+		return resultMap;
+	}
+	
+	//test数据上传后更新qdsProduct中testStatus的方法（DIN）
+	protected void updateQdsProTestStatus(List<String> moduleNoList){
+		try {
+			for(int i=0;i<moduleNoList.size();i++){
+				String moduleNo=moduleNoList.get(i);
+				int qdsProCategoryId=1;	//产品分类1表示DIN
+				//获取qdsProductTest最后一条记录的testResult的状态
+				String testResult=qdsProTestSer.isTestPassAtTheEnd(moduleNo, qdsProCategoryId);	
+				if(testResult.equals("P")){	//状态为"P"则设置qdsProduct的testStatus为1
+					int testStatus=1;
+					//设置qdsProduct的testStatus为1
+					qProductService.updateTestStatusQdsProductByModuleNo(moduleNo, testStatus);
+					//根据moduleNo查询PASS的产品是否有FAIL记录
+					Integer isTestFailed=qdsProTestSer.isTestFailedByModuleNo(moduleNo, qdsProCategoryId);
+					if(isTestFailed!=0){	//有FAIL记录则errorStatus设为1，表示有维修数据需要待输入
+						qdsProTestSer.updateErrorStatusAtTheEnd(moduleNo, qdsProCategoryId);
+					}
+				}else if(testResult.equals("F")){	//状态为"F"则设置qdsProduct的testStatus为0
+					int testStatus=0;
+					qProductService.updateTestStatusQdsProductByModuleNo(moduleNo, testStatus);//设置qdsProduct的testStatus为0
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//输入维修数据按“提交”按钮：新增产品不良记录
+	@RequestMapping(value="/addProductError.ajax",method=RequestMethod.POST)
+	@ResponseBody
+	public Object addProductError(String moduleNo,int qdsProCategoryId,int errorCodeId,
+								  String remark,int productTestId,HttpSession session){
+		HashMap<String,String> resultMap=new HashMap<String,String>();
+		try {
+			QdsProductError qdsProductError=new QdsProductError();
+			qdsProductError.setModuleNo(moduleNo);
+			qdsProductError.setErrorCodeId(errorCodeId);
+			qdsProductError.setRemark(remark);
+			qdsProductError.setQdsProCategoryId(qdsProCategoryId);
+			qdsProductError.setQdsProductTestId(productTestId);
+			Users currentUser=(Users) session.getAttribute("user");
+			qdsProductError.setRepairBy(currentUser.getId());
+			productErrorService.addProductError(qdsProductError);	//在SQL中新增产品不良记录
+			int errorStatus=2;	//2表示维修数据已输入
+			qdsProTestSer.updateProductTestById(productTestId, errorStatus, qdsProCategoryId);//更改productTest中的不良状态
+			resultMap.put("result", "success");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			resultMap.put("result", "failed");
+		}
+		return resultMap;
 	}
 
 	//QDS产品检验界面
@@ -513,24 +613,24 @@ public class QdsController {
 		}
 		return "qds/qDinDatabase";
 	}
-	
+
 	//新增基础数据
 	@RequestMapping(value="/addDatabase.ajax",method=RequestMethod.POST)
 	@ResponseBody
 	public Object addDatebase(HttpServletRequest request,String module,String ver,
-							  String part,String category){
+			String part,String category){
 		Map<String,String> result=new HashMap<String,String>();
 		try {
-		QdsModule qdsModule=new QdsModule();
-		qdsModule.setModule(module.toUpperCase());
-		qdsModule.setVer(ver.toUpperCase());
-		qdsModule.setPart(part.toUpperCase());
-		qdsModule.setCategory(category);
-		Users user=(Users) request.getSession().getAttribute("user");
-		qdsModule.setCreateBy(user.getId());
-		qdsModule.setQdsProCategoryId(qdsProCategoryId);
-		moduleSer.addQModule(qdsModule);
-		result.put("result", "success");
+			QdsModule qdsModule=new QdsModule();
+			qdsModule.setModule(module.toUpperCase());
+			qdsModule.setVer(ver.toUpperCase());
+			qdsModule.setPart(part.toUpperCase());
+			qdsModule.setCategory(category);
+			Users user=(Users) request.getSession().getAttribute("user");
+			qdsModule.setCreateBy(user.getId());
+			qdsModule.setQdsProCategoryId(qdsProCategoryId);
+			moduleSer.addQModule(qdsModule);
+			result.put("result", "success");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -538,7 +638,7 @@ public class QdsController {
 		}
 		return result;
 	}
-	
+
 	//新增基础数据的模块验证
 	@RequestMapping(value="/dinAddModule.ajax",method=RequestMethod.POST)
 	@ResponseBody
@@ -574,7 +674,7 @@ public class QdsController {
 		}
 		return result;
 	}
-	
+
 	//删除基础数据
 	@RequestMapping(value="/delDatabase.ajax",method=RequestMethod.GET)
 	@ResponseBody
@@ -594,7 +694,7 @@ public class QdsController {
 		}
 		return result;
 	}
-	
+
 	//维修代码界面
 	@RequestMapping(value="/errorWindows",method=RequestMethod.GET)
 	public String errorWindows(Model model){
@@ -608,7 +708,7 @@ public class QdsController {
 		}
 		return "qds/qErrorCode";
 	}
-	
+
 	//S/N自动生成界面
 	@RequestMapping(value="/dinCreateSnWindows",method=RequestMethod.GET)
 	public String dinCreateWindows(Model model,HttpServletRequest request,Integer currentPage){
@@ -641,7 +741,7 @@ public class QdsController {
 		}
 		return "qds/qDinCreateSn";
 	}
-	
+
 	//S/N生成的工作令验证
 	@RequestMapping(value="/addOrder.ajax",method=RequestMethod.POST)
 	@ResponseBody
@@ -671,7 +771,7 @@ public class QdsController {
 		}
 		return result;
 	}
-	
+
 	//S/N生成的模块型号验证
 	@RequestMapping(value="/checkModule.ajax",method=RequestMethod.POST)
 	@ResponseBody
@@ -698,7 +798,7 @@ public class QdsController {
 		}	
 		return result;
 	}
-	
+
 	//S/N生成的版本号验证
 	@RequestMapping(value="/checkVer.ajax",method=RequestMethod.POST)
 	@ResponseBody
@@ -726,7 +826,7 @@ public class QdsController {
 		}
 		return result;
 	}
-	
+
 	//S/N生成预览
 	@RequestMapping(value="/createSnReview.ajax",method=RequestMethod.POST)
 	@ResponseBody
@@ -737,52 +837,52 @@ public class QdsController {
 			String week="";
 			//获取周期
 			Calendar c=Calendar.getInstance();
-		    int w = c.get(Calendar.WEEK_OF_YEAR);
-		    int year = c.get(Calendar.YEAR);
-		    if(w<10){
-		    	week=String.valueOf(year).substring(2)+"0"+w;
-		    }else{
-		    	week=String.valueOf(year).substring(2)+w;
-		    }
-		    String sn=module+ver+"SF"+week;	//模块+版本+周期
-		    List<QdsProduct> qdsProductList=new ArrayList<QdsProduct>();
-		    //Integer isExsitP=qProductService.isExsitProductByModuleNo(sn, qdsProCategoryName);	//本周期型号是否存在
-		    String snEnd=productOrderService.getProductOrderBySnEnd(sn, qdsProCategoryName);	//本周期型号是否存在
-		    if(snEnd==null){	//本周期无此型号产品
-		    	int count=1;
-		    	for(int i=0;i<pwdQuantity;i++){
-		    		QdsProduct qdsProduct=new QdsProduct();
-		    		if(count<10){
-		    			qdsProduct.setModuleNo(sn+"000"+count);
-		    		}else if(10<=count && count<100){
-		    			qdsProduct.setModuleNo(sn+"00"+count);
-		    		}else if(100<=100 && count<1000){
-		    			qdsProduct.setModuleNo(sn+"0"+count);
-		    		}else{
-		    			qdsProduct.setModuleNo(sn+count);
-		    		}
-		    		qdsProductList.add(qdsProduct);
-		    		count++;
-		    	}
-		    }else{	//本周期有此型号产品
-		    	int count=Integer.parseInt(snEnd.substring(15));	//获取本周期内的串号最大值
-		    	for(int i=0;i<pwdQuantity;i++){
-		    		QdsProduct qdsProduct=new QdsProduct();
-		    		count++;	//本次串号的起始值
-		    		if(count<10){
-		    			qdsProduct.setModuleNo(sn+"000"+count);
-		    		}else if(10<=count && count<100){
-		    			qdsProduct.setModuleNo(sn+"00"+count);
-		    		}else if(100<=100 && count<1000){
-		    			qdsProduct.setModuleNo(sn+"0"+count);
-		    		}else{
-		    			qdsProduct.setModuleNo(sn+count);
-		    		}
-		    		qdsProductList.add(qdsProduct);
-		    	}
-		    }
-		    String fastjson=JSON.toJSONString(qdsProductList);
-		    result.put("result", fastjson);
+			int w = c.get(Calendar.WEEK_OF_YEAR);
+			int year = c.get(Calendar.YEAR);
+			if(w<10){
+				week=String.valueOf(year).substring(2)+"0"+w;
+			}else{
+				week=String.valueOf(year).substring(2)+w;
+			}
+			String sn=module+ver+"SF"+week;	//模块+版本+周期
+			List<QdsProduct> qdsProductList=new ArrayList<QdsProduct>();
+			//Integer isExsitP=qProductService.isExsitProductByModuleNo(sn, qdsProCategoryName);	//本周期型号是否存在
+			String snEnd=productOrderService.getProductOrderBySnEnd(sn, qdsProCategoryName);	//本周期型号是否存在
+			if(snEnd==null){	//本周期无此型号产品
+				int count=1;
+				for(int i=0;i<pwdQuantity;i++){
+					QdsProduct qdsProduct=new QdsProduct();
+					if(count<10){
+						qdsProduct.setModuleNo(sn+"000"+count);
+					}else if(10<=count && count<100){
+						qdsProduct.setModuleNo(sn+"00"+count);
+					}else if(100<=100 && count<1000){
+						qdsProduct.setModuleNo(sn+"0"+count);
+					}else{
+						qdsProduct.setModuleNo(sn+count);
+					}
+					qdsProductList.add(qdsProduct);
+					count++;
+				}
+			}else{	//本周期有此型号产品
+				int count=Integer.parseInt(snEnd.substring(15));	//获取本周期内的串号最大值
+				for(int i=0;i<pwdQuantity;i++){
+					QdsProduct qdsProduct=new QdsProduct();
+					count++;	//本次串号的起始值
+					if(count<10){
+						qdsProduct.setModuleNo(sn+"000"+count);
+					}else if(10<=count && count<100){
+						qdsProduct.setModuleNo(sn+"00"+count);
+					}else if(100<=100 && count<1000){
+						qdsProduct.setModuleNo(sn+"0"+count);
+					}else{
+						qdsProduct.setModuleNo(sn+count);
+					}
+					qdsProductList.add(qdsProduct);
+				}
+			}
+			String fastjson=JSON.toJSONString(qdsProductList);
+			result.put("result", fastjson);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -790,12 +890,12 @@ public class QdsController {
 		}
 		return result;
 	}
-	
+
 	//S/N生成(使用synchronized，未进行多用户测试？？？)
 	@RequestMapping(value="/createSn.ajax",method=RequestMethod.POST)
 	@ResponseBody
 	public synchronized Object createSn(String reviewList,String order,String module1,String ver,Integer pwdQuantity,
-						   Integer qdsProCategoryId,HttpSession session){
+			Integer qdsProCategoryId,HttpSession session){
 		Map<String,String> result=new HashMap<String,String>();
 		if(reviewList!=null && !reviewList.equals("")){
 			Users currentUser=(Users) session.getAttribute("user");
@@ -842,7 +942,7 @@ public class QdsController {
 		}
 		return result;
 	}
-	
+
 	//删除product
 	@RequestMapping(value="/deleteProductOrder.ajax",method=RequestMethod.POST)
 	@ResponseBody
@@ -869,7 +969,7 @@ public class QdsController {
 		}
 		return result;
 	}
-	
+
 	//历史数据界面
 	@RequestMapping(value="/dinHistoryWindows",method=RequestMethod.GET)
 	public String dinHistoryWindows(Model model,HttpServletRequest request,Integer currentPage){
@@ -899,7 +999,7 @@ public class QdsController {
 		}
 		return "qds/qDinHistory";
 	}
-	
+
 	//历史详情
 	@RequestMapping(value="/detailHistory.ajax",method=RequestMethod.POST)
 	@ResponseBody

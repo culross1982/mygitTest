@@ -28,6 +28,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<mapper resource="com/foxboro/dao/qds/ErrorCodeMapper.xml"/>
 		<mapper resource="com/foxboro/dao/qds/ProductOrderDaoMapper.xml"/>
 		<mapper resource="com/foxboro/dao/qds/QProductDaoMapper.xml"/>
+		<mapper resource="com/foxboro/dao/qds/ProductErrorDaoMapper.xml"/>
 	</mappers>
 
 </configuration>

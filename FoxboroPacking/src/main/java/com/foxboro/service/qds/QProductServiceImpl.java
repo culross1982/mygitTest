@@ -15,9 +15,9 @@ public class QProductServiceImpl implements QProductService {
 	
 	//根据moduelNo查询是否存在product
 	@Override
-	public Integer isExsitProductByModuleNo(String moduleNo, String qdsProCategoryName) throws Exception {
+	public Integer isExsitProductByModuleNo(String moduleNo, int qdsProCategoryId) throws Exception {
 		// TODO Auto-generated method stub
-		return qProductDao.isExsitProductByModuleNo(moduleNo, qdsProCategoryName);
+		return qProductDao.isExsitProductByModuleNo(moduleNo, qdsProCategoryId);
 	}
 
 	//新增QDS产品
@@ -61,5 +61,35 @@ public class QProductServiceImpl implements QProductService {
 		// TODO Auto-generated method stub
 		qProductDao.updateAssyStatusQdsProductByModuleNo(moduleNo, assyStatus);
 	}
+	
+	//根据moduleNo修改对应的testStatus
+	@Override
+	public void updateTestStatusQdsProductByModuleNo(String moduleNo, int testStatus) throws Exception {
+		// TODO Auto-generated method stub
+		qProductDao.updateTestStatusQdsProductByModuleNo(moduleNo, testStatus);
+	}
+
+	//按条件查询DQS中TestResult有值的产品
+	@Override
+	public List<QdsProduct> getQdsProductWhereTestResult(QdsProduct qdsProduct) throws Exception {
+		// TODO Auto-generated method stub
+		return qProductDao.getQdsProductWhereTestResult(qdsProduct);
+	}
+
+	//按条件查询QDS中TestResult有值的产品总数
+	@Override
+	public int getQdsProductCountWhereTestResult(QdsProduct qdsProduct) throws Exception {
+		// TODO Auto-generated method stub
+		return qProductDao.getQdsProductCountWhereTestResult(qdsProduct);
+	}
+
+	//按moduleNo查看装配数据是否PASS
+	@Override
+	public Integer getAssyStatusByModuleNo(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return qProductDao.getAssyStatusByModuleNo(moduleNo, qdsProCategoryId);
+	}
+
+	
 
 }
