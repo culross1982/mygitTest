@@ -213,7 +213,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="control-label col-md-3 col-sm-3 col-xs-12">不良代码</label>
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">不良描述</label>
 								<div class="col-md-9 col-sm-9 col-xs-12">
 									<select id="errorCodeId" name="errorCodeId" class="form-control col-md-7 col-xs-12"  style="font-size:8px;width:200px;">
 										<option value="14">重新测试</option>
@@ -231,7 +231,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="control-label col-md-3 col-sm-3 col-xs-12">备    注</label>
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">备注</label>
 								<div class="col-md-9 col-sm-9 col-xs-12">
 									<input name="remark" id="remark" type="text" class="form-control col-md-7 col-xs-12">
 								</div>
@@ -268,7 +268,7 @@
 				<div class="modal-body">
 
 					<input class="hide" id="qdsProCategoryId" value="1"></input>	<!-- 给ajax提供产品分类 -->
-					<input class="hide" id="productTestId"></input>	<!-- 给ajax提供qdsProductTestId -->
+					<input class="hide" id="productTestId1"></input>	<!-- 给ajax提供qdsProductTestId -->
 					<!-- <form class="form-horizontal form-label-left input_mask" id="input_mask"> -->
 					<div class="form-horizontal form-label-left input_mask" id="input_mask">
 						<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"
@@ -321,7 +321,7 @@
 						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 						关闭
 					</button>
-					<button type="button" id="addErrorBtn" class="btn btn-success" >
+					<button type="button" id="modifyErrorBtn" class="btn btn-success" >
 						<span class="glyphicon glyphicon-floppy-disk" style="color:white" aria-hidden="true"></span>
 						修改
 					</button>

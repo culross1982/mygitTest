@@ -69,4 +69,14 @@ public interface ProductTestDao {
 	public void updateProductTestById(@Param("id") int id,
 									  @Param("errorStatus") int errorStatus,
 									  @Param("qdsProCategoryId") int qdsProCategoryId) throws Exception;
+	
+	/**
+	 * 根据moduleNo查询是否存在测试数据
+	 * @param moduleNo
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exceptione
+	 */
+	public Integer isExistTestByModuleNo(@Param("moduleNo") String moduleNo,
+									 @Param("qdsProCategoryId") int qdsProCategoryId) throws Exception;
 }

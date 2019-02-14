@@ -29,15 +29,15 @@
 								<div class="form-group">
 									<label class="control-label col-md-3 col-sm-3 col-xs-12">工作令</label>
 									<div class="col-md-9 col-sm-9 col-xs-12">
-										<input name="partNo" type="text" class="form-control col-md-7 col-xs-12" pattern="[0-9a-zA-Z]*" placeholder="请输入工作令">
+										<input name="order" type="text" class="form-control col-md-7 col-xs-12" pattern="[0-9a-zA-Z]*" placeholder="请输入工作令">
 									</div>
 								</div>
 							</li>
 							<li>
 								<div class="form-group">
-									<label class="control-label col-md-3 col-sm-3 col-xs-12">模块串号</label>
+									<label class="control-label col-md-3 col-sm-3 col-xs-12">模块型号</label>
 									<div class="col-md-9 col-sm-9 col-xs-12">
-										<input name="partNo" type="text" class="form-control col-md-7 col-xs-12" pattern="[0-9a-zA-Z]*" placeholder="请输入模块串号">
+										<input name="module" type="text" class="form-control col-md-7 col-xs-12" pattern="[0-9a-zA-Z]*" placeholder="请输入模块串号">
 									</div>
 								</div>
 							</li>

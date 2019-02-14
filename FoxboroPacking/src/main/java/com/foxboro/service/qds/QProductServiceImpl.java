@@ -90,6 +90,55 @@ public class QProductServiceImpl implements QProductService {
 		return qProductDao.getAssyStatusByModuleNo(moduleNo, qdsProCategoryId);
 	}
 
+	//按id查看是此工作令否已有装配数据
+	@Override
+	public List<Integer> getAssyStatusById(int id, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return qProductDao.getAssyStatusById(id, qdsProCategoryId);
+	}
+
+	//按条件查询可以检验的QDS产品
+	@Override
+	public List<QdsProduct> getQdsProductByInspect(QdsProduct qdsProduct) throws Exception {
+		// TODO Auto-generated method stub
+		return qProductDao.getQdsProductByInspect(qdsProduct);
+	}
+
+	//按条件查询可以检验的QDS产品总数
+	@Override
+	public int getQdsProductCountByInspect(QdsProduct qdsProduct) throws Exception {
+		// TODO Auto-generated method stub
+		return qProductDao.getQdsProductCountByInspect(qdsProduct);
+	}
+
+	//根据moduleNo查找对应的qdsProduct
+	@Override
+	public QdsProduct getQdsProductByModuleNo(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return qProductDao.getQdsProductByModuleNo(moduleNo, qdsProCategoryId);
+	}
+
+	//根据inspectionStatus修改inspect信息
+	@Override
+	public void updateQdsProInsByModuleNo(QdsProduct qdsProduct) throws Exception {
+		// TODO Auto-generated method stub
+		qProductDao.updateQdsProInsByModuleNo(qdsProduct);
+	}
+	
+	//按日期获取检验工作令id
+	@Override
+	public List<Integer> getQdsProOrderIdByInspectionTime(QdsProduct qdsProduct) throws Exception {
+		// TODO Auto-generated method stub
+		return qProductDao.getQdsProOrderIdByInspectionTime(qdsProduct);
+	}
+
+	//获取当天已检验的数量
+	@Override
+	public int getCountByQdsProOrderId(QdsProduct qdsProduct) throws Exception {
+		// TODO Auto-generated method stub
+		return qProductDao.getCountByQdsProOrderId(qdsProduct);
+	}
+
 	
 
 }

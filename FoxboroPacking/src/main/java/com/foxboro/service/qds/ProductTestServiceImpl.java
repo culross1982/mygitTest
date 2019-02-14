@@ -63,4 +63,11 @@ public class ProductTestServiceImpl implements ProductTestService {
 		productTestDao.updateProductTestById(id, errorStatus, qdsProCategoryId);
 	}
 
+	//根据moduleNo查询是否存在测试数据
+	@Override
+	public Integer isExistTestByModuleNo(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return productTestDao.isExistTestByModuleNo(moduleNo, qdsProCategoryId);
+	}
+
 }

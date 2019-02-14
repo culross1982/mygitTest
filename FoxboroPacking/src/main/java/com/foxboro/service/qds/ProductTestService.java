@@ -64,4 +64,13 @@ public interface ProductTestService {
 	 * @throws Exception
 	 */
 	public void updateProductTestById(int id,int errorStatus,int qdsProCategoryId) throws Exception;
+	
+	/**
+	 * 根据moduleNo查询是否存在测试数据
+	 * @param moduleNo
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exceptione
+	 */
+	public Integer isExistTestByModuleNo(String moduleNo,int qdsProCategoryId) throws Exception;
 }

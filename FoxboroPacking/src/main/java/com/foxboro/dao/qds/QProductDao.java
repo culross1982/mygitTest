@@ -101,4 +101,67 @@ public interface QProductDao {
 	 */
 	public Integer getAssyStatusByModuleNo(@Param("moduleNo") String moduleNo,
 										   @Param("qdsProCategoryId") int qdsProCategoryId) throws Exception;
+	
+	/**
+	 * 按id查看是此工作令否已有装配数据
+	 * @param id
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Integer> getAssyStatusById(@Param("id") int id,
+			     						   @Param("qdsProCategoryId") int qdsProCategoryId) throws Exception;
+	
+	/**
+	 * 按条件查询可以检验的QDS产品
+	 * @param qdsProduct 产品条件
+	 * @param beginNo	起始行数
+	 * @param pageSize	页数
+	 * @param dateStart	开始日期
+	 * @param dateEnd	结束日期
+	 * @return
+	 */
+	public List<QdsProduct> getQdsProductByInspect(QdsProduct qdsProduct) throws Exception;
+	
+	/**
+	 * 按条件查询可以检验的QDS产品总数
+	 * @param qdsProduct
+	 * @return
+	 */
+	public int getQdsProductCountByInspect(QdsProduct qdsProduct) throws Exception;
+	
+	/**
+	 * 根据moduleNo查找对应的qdsProduct
+	 * @param moduleNo
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exception
+	 */
+	public QdsProduct getQdsProductByModuleNo(@Param("moduleNo") String moduleNo,
+											  @Param("qdsProCategoryId") int qdsProCategoryId) throws Exception;
+	
+	/**
+	 * 根据inspectionStatus修改inspect信息
+	 * @param qdsProduct
+	 * @throws Exception
+	 */
+	public void updateQdsProInsByModuleNo(QdsProduct qdsProduct) throws Exception;
+	
+	/**
+	 * 按日期获取检验工作令id
+	 * @param qdsProduct
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Integer> getQdsProOrderIdByInspectionTime(QdsProduct qdsProduct) throws Exception;
+	
+	/**
+	 * 获取当天已检验的数量
+	 * @param qdsProductOrderId
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exception
+	 */
+	public int getCountByQdsProOrderId(QdsProduct qdsProduct) throws Exception;
+	
 }

@@ -5,7 +5,7 @@
 	
 	<!-- 根据moduelNo查询是否存在product -->
 	<select id="isExsitProductByModuleNo" resultType="Integer">
-		SELECT COUNT(*) FROM qdsProduct AS p WHERE p.moduleNo LIKE CONCAT (#{moduleNo},'%') AND p.qdsProCategoryId;
+		SELECT COUNT(*) FROM qdsProduct AS p WHERE p.qdsProCategoryId AND p.moduleNo LIKE CONCAT (#{moduleNo},'%');
 	</select>
 	
 	<!-- 新增QDS产品 -->
@@ -64,5 +64,62 @@
 	<!-- 按moduleNo查看装配数据是否PASS -->
 	<select id="getAssyStatusByModuleNo" resultType="int">
 		select assyStatus from qdsProduct where moduleNo=#{moduleNo} and qdsProCategoryId=#{qdsProCategoryId}
+	</select>
+	
+	<!-- 按id查看是此工作令否已有装配数据 -->
+	<select id="getAssyStatusById" resultType="Integer">
+		SELECT assyStatus FROM qdsProduct WHERE qdsProCategoryId=#{qdsProCategoryId} AND qdsProductOrderId=#{id};
+	</select>
+	
+	<!-- 按条件查询可以检验的QDS产品 -->
+	<select id="getQdsProductByInspect" parameterType="QdsProduct" resultType="QdsProduct">
+		SELECT *,(select o.order from qdsProductOrder o where o.id=p.qdsProductOrderId) as `order`,
+		(select u.realname from users u where u.id=p.inspectionBy) as inspectionRealName
+		FROM qdsProduct p 
+		WHERE p.qdsProCategoryId=#{qdsProCategoryId} and p.assyStatus=#{assyStatus} and p.testStatus=#{testStatus}
+		<if test="moduleNo!=null and moduleNo!=''">and p.moduleNo like concat ('%',#{moduleNo},'%')</if>
+		order by id desc limit #{beginNo},#{pageSize}
+	</select>
+	
+	<!-- 按条件查询可以检验的QDS产品总数 -->
+	<select id="getQdsProductCountByInspect" resultType="int" parameterType="QdsProduct">
+		select count(*) from qdsProduct p 
+		where p.qdsProCategoryId=#{qdsProCategoryId} and p.assyStatus=#{assyStatus} and p.testStatus=#{testStatus}
+		<if test="moduleNo!=null and moduleNo!=''">and p.moduleNo like concat ('%',#{moduleNo},'%')</if> 
+	</select>
+	
+	<!-- 根据moduleNo查找对应的qdsProduct -->
+	<select id="getQdsProductByModuleNo" resultType="QdsProduct">
+		select * from qdsProduct where qdsProCategoryId=#{qdsProCategoryId} and moduleNo=#{moduleNo}
+	</select>
+	
+	<!-- 根据inspectionStatus修改inspect信息 -->
+	<update id="updateQdsProInsByModuleNo" parameterType="QdsProduct">
+		update qdsProduct set inspectionStatus=#{inspectionStatus}
+		<if test="inspectionStatus==1">,inspectionTime=now(),inspectionBy=#{inspectionBy}</if>
+		<if test="inspectionStatus==0">,inspectionTime=null,inspectionBy=0</if>
+		where qdsProCategoryId=#{qdsProCategoryId} 
+		<if test="moduleNo!=null and moduleNo!=''">and moduleNo=#{moduleNo}</if>
+		<if test="id!=0 and id!=''">and id=#{id}</if>
+	</update>
+	
+	<!-- 获取当天的检验工作令id -->
+	<select id="getQdsProOrderIdByInspectionTime" parameterType="String" resultType="Integer">
+		SELECT qdsProductOrderId FROM qdsProduct 
+		WHERE date_sub(curdate(),interval 0 day)&lt;=date(inspectionTime)
+		AND qdsProCategoryId=#{qdsProCategoryId} 
+		AND inspectionStatus=1 
+		AND inspectionBy=#{inspectionBy} 
+		GROUP BY qdsProductOrderId
+	</select>
+	
+	<!-- 获取当天已检验的数量 -->
+	<select id="getCountByQdsProOrderId" resultType="int">
+		SELECT COUNT(*) FROM qdsProduct 
+		WHERE date_sub(curdate(),interval 0 day)&lt;=date(inspectionTime)
+		AND qdsProCategoryId=#{qdsProCategoryId} 
+		AND inspectionBy=#{inspectionBy} 
+		AND inspectionStatus=1 
+		AND qdsProductOrderId=#{qdsProductOrderId}
 	</select>
 </mapper>

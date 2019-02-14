@@ -1,4 +1,5 @@
 var assyNoModify=false;
+var qdsProCategoryId=1;	//1表示产品分类为DIN
 
 $(".daterange input").each(function() {
 	var $this = $(this);
@@ -404,7 +405,7 @@ $(".deleteDinAssy").click(function(){
 	if(confirm("你确定要删除【"+assyNo+"】的数据信息吗？")){
 		$.ajax({
 			url:"delAssyDataById.ajax",
-			data:{"id":id,"moduleNo":moduleNo},
+			data:{"id":id,"moduleNo":moduleNo,"qdsProCategoryId":qdsProCategoryId},
 			type:"post",
 			dataType:"json",
 			success:function(data){
@@ -415,6 +416,8 @@ $(".deleteDinAssy").click(function(){
 					humane.log("删除失败！");
 				}else if(data.result=="error"){
 					humane.log("系统错误！");
+				}else if(data.result=="isExistTest"){
+					humane.log("已存在测试数据，无法删除！");
 				}
 			},
 			error:function(){
@@ -457,8 +460,10 @@ $("#modifyDinAssyBtn").click(function(){
 				if(data.result=="success"){
 					humane.log("修改成功！");
 					window.setTimeout("window.location.href='dinAssyWindows'",1500);//弹窗后延迟跳转网页
-				}else if(data.reusult=="failed"){
+				}else if(data.result=="failed"){
 					humane.log("修改失败！");
+				}else if(data.result=="isExistTest"){
+					humane.log("已存在测试数据，无法修改！")
 				}
 			},
 			error:function(){

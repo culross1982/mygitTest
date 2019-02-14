@@ -55,4 +55,13 @@ public interface ProductOrderService {
 	 * @throws Exception
 	 */
 	public void delProductOrderById(int id) throws Exception;
+	
+	/**
+	 * 根据id获取对应的QdsProductOrder
+	 * @param id
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exception
+	 */
+	public QdsProductOrder getQdsProOrderById(int id,int qdsProCategoryId) throws Exception;
 }

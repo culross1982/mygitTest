@@ -41,4 +41,9 @@
 	<delete id="delProductOrderById" parameterType="int">
 		delete from qdsProductOrder where id=#{id};
 	</delete>
+	
+	<!-- 根据id获取对应的QdsProductOrder -->
+	<select id="getQdsProOrderById" resultType="QdsProductOrder">
+		select * from qdsProductOrder where id=#{id};
+	</select>
 </mapper>

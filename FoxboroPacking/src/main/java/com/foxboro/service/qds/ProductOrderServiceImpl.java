@@ -54,6 +54,13 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 		// TODO Auto-generated method stub
 		productOrderDao.delProductOrderById(id);
 	}
+
+	//根据id获取对应的QdsProductOrder
+	@Override
+	public QdsProductOrder getQdsProOrderById(int id, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return productOrderDao.getQdsProOrderById(id, qdsProCategoryId);
+	}
 	
 
 	

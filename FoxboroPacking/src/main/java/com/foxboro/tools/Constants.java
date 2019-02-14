@@ -8,7 +8,7 @@ import com.foxboro.entity.Page;
 import com.foxboro.entity.Users;
 
 public class Constants {
-	public final static int maxSize=50;	//每页显示的数量
+	public final static int maxSize=100;	//每页显示的数量
 	public static ArrayList<Users> loginAccount;	//“单一登录”的用户储存集合
 	public static final String SESSION_USER="userSession";
 	public static final String SESSION_MODULE_MENU="moduleMenu";	//当前登录用户的模块菜单

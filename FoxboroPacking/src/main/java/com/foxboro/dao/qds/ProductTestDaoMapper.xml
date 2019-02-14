@@ -36,7 +36,7 @@
 	<!-- 根据moduleNo查询最后一条记录是否为PASS -->
 	<select id="isTestPassAtTheEnd" resultType="String">
 		select testResult from qdsProductTest 
-		where qdsProCategoryId=#{qdsProCategoryId} and moduleNo=#{moduleNo} ORDER BY id desc LIMIT 1
+		where qdsProCategoryId=#{qdsProCategoryId} and moduleNo=#{moduleNo} ORDER BY testTime desc LIMIT 1
 	</select>
 	
 	<!-- 根据moduleNo查询是否有记录为FAIL -->
@@ -56,4 +56,9 @@
 		update qdsProductTest set errorStatus=#{errorStatus} 
 		where qdsProCategoryId=#{qdsProCategoryId} and testResult='F' and id=#{id}
 	</update>
+	
+	<!-- 根据moduleNo查询是否存在测试数据 -->
+	<select id="isExistTestByModuleNo" resultType="Integer">
+		select count(*) from qdsProductTest where qdsProCategoryId=#{qdsProCategoryId} and moduleNo=#{moduleNo}
+	</select>
 </mapper>

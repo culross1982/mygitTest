@@ -7,7 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class QdsProduct extends Base{
 	private String moduleNo;
 	private int assyStatus;
-	private String testStatus;
+	private int testStatus;
 	private int inspectionBy;
 	@DateTimeFormat(pattern="yyyy-MM-hh HH:mm:ss")
 	private Date inspectionTime;
@@ -18,7 +18,14 @@ public class QdsProduct extends Base{
 	private String qdsProCategoryName;
 	private String order;
 	private String realName;
+	private String inspectionRealName;
 	
+	public String getInspectionRealName() {
+		return inspectionRealName;
+	}
+	public void setInspectionRealName(String inspectionRealName) {
+		this.inspectionRealName = inspectionRealName;
+	}
 	public String getRealName() {
 		return realName;
 	}
@@ -55,10 +62,10 @@ public class QdsProduct extends Base{
 	public void setAssyStatus(int assyStatus) {
 		this.assyStatus = assyStatus;
 	}
-	public String getTestStatus() {
+	public int getTestStatus() {
 		return testStatus;
 	}
-	public void setTestStatus(String testStatus) {
+	public void setTestStatus(int testStatus) {
 		this.testStatus = testStatus;
 	}
 	public int getInspectionBy() {
