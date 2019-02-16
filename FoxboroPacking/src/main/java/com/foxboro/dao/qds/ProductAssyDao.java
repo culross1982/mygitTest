@@ -87,4 +87,13 @@ public interface ProductAssyDao {
 	 */
 	public String getAssyNoByModuleNo(@Param("moduleNo") String moduleNo,
 									  @Param("qdsProCategoryId") int qdsProCategoryId) throws Exception;
+	
+	/**
+	 * 按moduleNo查询对应的QdsProductAssy
+	 * @param moduleNo
+	 * @return
+	 * @throws Exception
+	 */
+	public List<QdsProductAssy> getQdsProductAssyByModuleNo(@Param("moduleNo") String moduleNo,
+									  @Param("qdsProCategoryId") int qdsProCategoryId) throws Exception;
 }

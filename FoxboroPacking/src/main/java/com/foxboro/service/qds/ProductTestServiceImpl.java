@@ -70,4 +70,18 @@ public class ProductTestServiceImpl implements ProductTestService {
 		return productTestDao.isExistTestByModuleNo(moduleNo, qdsProCategoryId);
 	}
 
+	//根据moduleNo查询最后一条PASS的测试数据
+	@Override
+	public QdsProductTest getQdsProTestByTestAtEnd(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return productTestDao.getQdsProTestByTestAtEnd(moduleNo, qdsProCategoryId);
+	}
+
+	//根据moduleNo查询最后一条FAIL的测试数据
+	@Override
+	public QdsProductTest getQdsProTestByTestFailAtEnd(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return productTestDao.getQdsProTestByTestFailAtEnd(moduleNo, qdsProCategoryId);
+	}
+
 }

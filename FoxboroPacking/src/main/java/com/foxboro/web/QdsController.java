@@ -41,6 +41,7 @@ import com.foxboro.entity.QdsProductError;
 import com.foxboro.entity.QdsProductOrder;
 import com.foxboro.entity.QdsProductTest;
 import com.foxboro.entity.Users;
+import com.foxboro.service.RoleService;
 import com.foxboro.service.qds.ErrorCodeService;
 import com.foxboro.service.qds.ModuleService;
 import com.foxboro.service.qds.ProductAssyService;
@@ -68,6 +69,8 @@ public class QdsController {
 	private QProductService qProductService;
 	@Autowired
 	private ProductErrorService productErrorService;
+	@Autowired
+	private RoleService roleService;
 
 	private int qdsProCategoryId=1;	//1表示产品分类为din
 	private String qdsProCategoryName="DIN";
@@ -126,6 +129,20 @@ public class QdsController {
 			e.printStackTrace();
 		}
 		return "qds/qDinAssy";
+	}
+	
+	//按用户角色获取修改功能权限
+	protected Integer getModifyStatus(HttpServletRequest request,String roleName){
+		Integer result=0;
+		Users currentUser=(Users) request.getSession().getAttribute("user");
+		currentUser.setRoleName(roleName);
+		if(roleService.getModifyStatueByUsername(currentUser)!=null){
+			Integer modifyStatus=roleService.getModifyStatueByUsername(currentUser);
+			if(modifyStatus==1){	//当角色为普通用户时才执行屏蔽增、删、改功能
+				result= modifyStatus;
+			}
+		}
+		return result;
 	}
 
 	//进行包材历史清单页面展示asc
@@ -405,7 +422,6 @@ public class QdsController {
 	public void addDinTestFromLog(MultipartFile attachment,HttpSession session,HttpServletResponse response){
 		try {
 			PrintWriter out=response.getWriter();
-			//Map<String,String> result=new HashMap<String,String>();
 			if(!attachment.isEmpty()){
 				String url=attachment.getOriginalFilename();	//原文件名
 				String suffix=url.substring(url.lastIndexOf(".")).toUpperCase();	//获取文件后缀
@@ -413,8 +429,8 @@ public class QdsController {
 					String tempFileName=url;
 					File targetFile=new File("d:\\",tempFileName);
 					try {
-						attachment.transferTo(targetFile);
-						File file=new File("d:\\"+tempFileName);
+						attachment.transferTo(targetFile);	//复制要上传的log文件到 D:盘
+						File file=new File("d:\\"+tempFileName);	
 						Users currentUser=(Users) session.getAttribute("user");
 						HashMap<String,String> updateResultList=attachmentToSave(file,currentUser.getId());	//调用上传方法
 						String uploadFailed="";
@@ -426,7 +442,14 @@ public class QdsController {
 								uploadCount=updateResult;	//成功上传的条数
 							}
 						}
-						out.print("<script>alert('"+uploadCount+"条测试数据上传成功！"+uploadFailed+"无装配数据，上传失败！');window.location.href='dinTestWindows';</script>");
+						if(file.exists() && file.isFile()){
+							file.delete();//删除D:盘的临时文件
+						}
+						if(uploadFailed.isEmpty()){
+							out.print("<script>alert('"+uploadCount+"条测试数据上传成功！');window.location.href='dinTestWindows';</script>");
+						}else{
+							out.print("<script>alert('"+uploadCount+"条测试数据上传成功！******"+uploadFailed+"无装配数据，上传失败！******');window.location.href='dinTestWindows';</script>");
+						}	
 					} catch (IllegalStateException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -435,28 +458,23 @@ public class QdsController {
 						e.printStackTrace();
 					}
 				}else{
-					//result.put("result", "notLOG");	//扩展名不正确
 					out.print("<script>alert('扩展名不正确！请选择正确的文件');window.location.href='dinTestWindows';</script>");
 				}
 			}else{
-				//result.put("result", "empty");	//文件为空
 				out.print("<script>alert('文件为空！请选择正确的文件');window.location.href='dinTestWindows';</script>");
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//return result;
 	}
 
 	//本地文件信息上传至SQL（DIN）
 	protected HashMap<String,String> attachmentToSave(File file,int testBy){
-		//int result=0;
 		HashMap<String,String> resultMap=new HashMap<String,String>();
 		int resultCount=0;	//上传的成功条数
 		FileReader fr=null;
 		BufferedReader br=null;
-		//List<QdsProductTest> recoredList=new ArrayList<QdsProductTest>();
 		try {
 			fr=new FileReader(file);
 			br=new BufferedReader(fr);
@@ -501,7 +519,6 @@ public class QdsController {
 						}else{	//装配数据FAIL
 							j++;	//HashMap的key值
 							resultMap.put(String.valueOf(j), moduleNo);	//存入装配数据FAIL的值
-							//resultList.add(moduleNo);
 						}
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
@@ -613,7 +630,7 @@ public class QdsController {
 		return resultMap;
 	}
 
-	//QDS产品检验界面（DIN）
+	//QDS产品检验界面（DIN） 是否增加synchronized		？？？
 	@RequestMapping(value="/dinInspectWindows",method=RequestMethod.GET)
 	public String dinInspectWindows(Model model,HttpServletRequest request,Integer currentPage,HttpSession session){
 		//分页查询
@@ -667,6 +684,9 @@ public class QdsController {
 			}
 			model.addAttribute("qdsInspectTotalList", qdsInspectTotalList);
 			
+			//调用按用户角色获取“包材”修改功能权限的方法
+			Integer modifyStatus=getModifyStatus(request, "QDS");
+			model.addAttribute("modifyStatus",modifyStatus);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -909,6 +929,9 @@ public class QdsController {
 			model.addAttribute("pageCount", page.getPageCount());
 			model.addAttribute("count", page.getCount());
 			model.addAttribute("qdsProductOrder",qdsProductOrder);	//回显
+			//调用按用户角色获取“包材”修改功能权限的方法
+			Integer modifyStatus=getModifyStatus(request, "QDS");
+			model.addAttribute("modifyStatus",modifyStatus);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1210,5 +1233,50 @@ public class QdsController {
 			result.put("result", "failed");
 		}
 		return result;
+	}
+	
+	//历史详情界面
+	@RequestMapping(value="/dinHistoryDetailWindows",method=RequestMethod.GET)
+	public String dinHistoryDetailWindows(int id,String order,String moduleNo,Model model){
+		try {
+			QdsProduct qdsProduct=new QdsProduct();
+			qdsProduct=qProductService.getQdsProductById(id);
+			model.addAttribute("qdsProduct",qdsProduct);
+			model.addAttribute("order",order);
+			int qdsProCategoryId=1;	//1为DIN
+			//产品的装配信息
+			QdsProductAssy qdsProductAssy=new QdsProductAssy();
+			List<QdsProductAssy> qdsProductAssyList=new ArrayList<QdsProductAssy>();
+			qdsProductAssyList=qdsProAssySer.getQdsProductAssyByModuleNo(moduleNo, qdsProCategoryId);
+			String assyNoP=null;
+			String assyNoM=null;
+			for(int i=0;i<qdsProductAssyList.size();i++){
+				if(i==0){
+					assyNoP=qdsProductAssyList.get(i).getAssyNo();
+					qdsProductAssy=qdsProductAssyList.get(i);
+				}else if(i==1){
+					assyNoM=qdsProductAssyList.get(i).getAssyNo();
+				}
+			}
+			model.addAttribute("assyNoP",assyNoP);
+			model.addAttribute("assyNoM",assyNoM);
+			model.addAttribute("qdsProductAssy",qdsProductAssy);
+			//产品的测试数据
+			Integer testStatus=qProductService.getTestStatusByModuleNo(moduleNo, qdsProCategoryId);//查询测试状态
+			if(testStatus==1){	//如果测试状态为PASS再显示测试详情
+				QdsProductTest qdsProductTest=new QdsProductTest();
+				//获取PASS数据
+				qdsProductTest=qdsProTestSer.getQdsProTestByTestAtEnd(moduleNo, qdsProCategoryId);
+				model.addAttribute("qdsProductTest",qdsProductTest);
+				//获取Fail数据
+				QdsProductTest qdsProductTestFail=new QdsProductTest();
+				qdsProductTestFail=qdsProTestSer.getQdsProTestByTestFailAtEnd(moduleNo, qdsProCategoryId);
+				model.addAttribute("qdsProductTestFail",qdsProductTestFail);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "qds/qDinHistoryDetail";
 	}
 }

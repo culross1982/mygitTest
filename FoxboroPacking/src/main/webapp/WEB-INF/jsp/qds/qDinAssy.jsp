@@ -81,7 +81,7 @@
 				<div id="datatable-responsive_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 					<div class="row">
 						<div class="col-sm-12">
-							<div class="modifyStatus" style="margin:5px 0;">
+							<div style="margin:5px 0;">
 								<a class="btn btn-success btn-sm" id="addDinAssy">新增装配数据</a>
 							</div>
 							<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"
@@ -111,7 +111,7 @@
 											aria-label="Last name: activate to sort column ascending">修改人员</th>
 										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">修改时间
-										<th class="sorting modifyStatus" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">操作</th>
 									</tr>
 								</thead>
@@ -128,7 +128,7 @@
 											<td><a class="modifyDinAssy operation btn btn-info btn-xs" data-toggle="tooltip" id=${a.id } realname=${a.realname } moduleNo=${a.moduleNo } assyNo=${a.assyNo } 
 											       assyTime=<fm:formatDate value="${a.assyTime}" pattern="yyyy-MM-dd HH:mm:ss" /> data-placement="top" 
 											       style="cursor: pointer"><i class="fa fa-pencil"></i>修改</a>&nbsp;&nbsp;
-												<a class="deleteDinAssy operation modifyStatus btn btn-danger btn-xs" data-toggle="tooltip" id=${a.id } assyNo=${a.assyNo } moduleNo=${a.moduleNo }
+												<a class="deleteDinAssy operation btn btn-danger btn-xs" data-toggle="tooltip" id=${a.id } assyNo=${a.assyNo } moduleNo=${a.moduleNo }
 												   style="cursor: pointer"><i class="fa fa-trash-o"></i>删除</a></td>
 										</tr>
 									</c:forEach>

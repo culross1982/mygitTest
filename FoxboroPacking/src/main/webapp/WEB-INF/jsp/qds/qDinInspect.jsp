@@ -52,7 +52,7 @@
 				<div id="datatable-responsive_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 					<div class="row">
 						<div class="col-sm-12">
-							<div class="modifyStatus" style="margin:5px 0;">
+							<div style="margin:5px 0;">
 								<a class="btn btn-success btn-sm" id="dinInspect">DIN检验</a>
 							</div>
 							<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"
@@ -71,7 +71,8 @@
 											aria-label="Last name: activate to sort column ascending">检验时间 </th>
 										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">检验者 </th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
+										<!-- 普通用户进行对此功能进行隐藏 -->
+										<th class="sorting modifyStatus" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">操作 </th>
 									</tr>
 								</thead>
@@ -87,9 +88,9 @@
 											</td>
 											<td><fm:formatDate value="${p.inspectionTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
 											<td>${p.inspectionRealName}</td>
-											<td>
+											<td class="modifyStatus"><!-- 普通用户进行对此功能进行隐藏 -->
 												<c:if test="${p.inspectionStatus==1}">
-													<a class="cancelDinInspect operation modifyStatus btn btn-danger btn-xs" data-toggle="tooltip" id=${p.id } moduleNo=${p.moduleNo }
+													<a class="cancelDinInspect operation btn btn-danger btn-xs" data-toggle="tooltip" id=${p.id } moduleNo=${p.moduleNo }
 												   style="cursor: pointer"><i class="fa fa-rotate-left (alias)"></i>撤销</a>
 												</c:if>
 											</td>
@@ -142,7 +143,7 @@
 				<div id="datatable-responsive_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 					<div class="row">
 						<div class="col-sm-12">
-							<div class="modifyStatus" style="margin:5px 0;">
+							<div style="margin:5px 0;">
 								<a class="btn btn-success btn-sm" style="color:black;background:white;border-color:black;cursor:default;">今日检验统计</a>
 							</div>
 							<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"
@@ -228,4 +229,26 @@
 	<!-- Inspect数据 end -->
 </div>
 <%@include file="common/footer.jsp"%>
-<script src="${pageContext.request.contextPath }/statics/qdsjs/qDinInspectChrome.js"></script>
+<script type="text/javascript">
+	function getBrowser() {
+		var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+		var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1; //判断是否IE<11浏览器   
+		var isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf("rv:11.0") > -1;
+		var isChrome = userAgent.indexOf("Chrome") > -1;
+		if (isIE11) { //判断是否IE浏览器
+			return "IE11";
+		}else if (isChrome) {
+			return "Chrome";
+		}
+	}
+
+	$(document).ready(function() {
+		var scriptNode = document.createElement("script");
+		 if (getBrowser() == "IE11") {
+			scriptNode.src="${pageContext.request.contextPath }/statics/qdsjs/qDinInspect.js";
+		} else if (getBrowser() == "Chrome") {
+			scriptNode.src="${pageContext.request.contextPath }/statics/qdsjs/qDinInspectChrome.js";
+		} 
+		$("body").append(scriptNode);
+	})
+</script>

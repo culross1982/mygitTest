@@ -54,6 +54,13 @@ public class QProductServiceImpl implements QProductService {
 		// TODO Auto-generated method stub
 		return qProductDao.getQdsProductById(id);
 	}
+	
+	//根据id获取单条QdsProduct的详细记录
+	/*@Override
+	public QdsProduct getQdsProductDetailById(int id) throws Exception {
+		// TODO Auto-generated method stub
+		return qProductDao.getQdsProductDetailById(id);
+	}*/
 
 	//根据moduleNo修改对应的assyStatus
 	@Override
@@ -88,6 +95,13 @@ public class QProductServiceImpl implements QProductService {
 	public Integer getAssyStatusByModuleNo(String moduleNo, int qdsProCategoryId) throws Exception {
 		// TODO Auto-generated method stub
 		return qProductDao.getAssyStatusByModuleNo(moduleNo, qdsProCategoryId);
+	}
+	
+	//按moduleNo查看测试数据是否PASS
+	@Override
+	public Integer getTestStatusByModuleNo(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return qProductDao.getTestStatusByModuleNo(moduleNo, qdsProCategoryId);
 	}
 
 	//按id查看是此工作令否已有装配数据
@@ -140,5 +154,4 @@ public class QProductServiceImpl implements QProductService {
 	}
 
 	
-
 }

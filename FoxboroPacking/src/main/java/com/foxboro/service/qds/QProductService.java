@@ -59,6 +59,14 @@ public interface QProductService {
 	public QdsProduct getQdsProductById(int id) throws Exception;
 	
 	/**
+	 * 根据id获取单条QdsProduct的详细记录
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	//public QdsProduct getQdsProductDetailById(int id) throws Exception;
+	
+	/**
 	 * 根据moduleNo修改对应的assyStatus
 	 * @param moduleNo
 	 * @throws Exception
@@ -97,6 +105,14 @@ public interface QProductService {
 	 * @throws Exception
 	 */
 	public Integer getAssyStatusByModuleNo(String moduleNo,int qdsProCategoryId) throws Exception;
+	
+	/**
+	 * 按moduleNo查看测试数据是否PASS
+	 * @param moduleNo
+	 * @return
+	 * @throws Exception
+	 */
+	public Integer getTestStatusByModuleNo(String moduleNo,int qdsProCategoryId) throws Exception;
 	
 	/**
 	 * 按id查看是此工作令否已有装配数据

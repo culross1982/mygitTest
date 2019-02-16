@@ -91,8 +91,9 @@
 												<c:if test="${p.inspectionStatus==1}"><i class="glyphicon glyphicon-ok"></i></c:if>				
 											</td>
 											<td>${p.qdsProCategoryName}</td>
-											<td><a class="detailHistory operation modifyStatus btn btn-success btn-xs" data-toggle="tooltip" id=${p.id } data-placement="top"
-													style="cursor: pointer"><i class="fa fa-table"></i>详情</a>
+											<td><a class=" operation modifyStatus btn btn-success btn-xs" 
+											     href="${pageContext.request.contextPath}/qds/dinHistoryDetailWindows?id=${p.id }&order=${p.order}&moduleNo=${p.moduleNo}"
+												 data-toggle="tooltip" id=${p.id } style="cursor: pointer"><i class="fa fa-table"></i>详情</a>
 											</td>
 										</tr>
 									</c:forEach>

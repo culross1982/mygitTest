@@ -71,7 +71,7 @@
 				<div id="datatable-responsive_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 					<div class="row">
 						<div class="col-sm-12">
-							<div class="modifyStatus">
+							<div>
 								<form action="${pageContext.request.contextPath}/qds/addDinTestFromLog" method="post" enctype="multipart/form-data"
 									onsubmit="return checkSuffix();" class="form-inline" style="margin:5px 0;">
 									<div class="form-group">

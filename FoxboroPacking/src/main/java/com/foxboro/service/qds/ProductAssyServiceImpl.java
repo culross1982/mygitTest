@@ -83,6 +83,13 @@ public class ProductAssyServiceImpl implements ProductAssyService {
 		return qdsProductAssyDao.getAssyNoByModuleNo(moduleNo, qdsProCategoryId);
 	}
 
+	//按moduleNo查询对应的QdsProductAssy
+	@Override
+	public List<QdsProductAssy> getQdsProductAssyByModuleNo(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return qdsProductAssyDao.getQdsProductAssyByModuleNo(moduleNo, qdsProCategoryId);
+	}
+
 	
 
 }

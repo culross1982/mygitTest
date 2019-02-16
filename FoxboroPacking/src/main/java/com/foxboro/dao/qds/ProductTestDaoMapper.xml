@@ -61,4 +61,16 @@
 	<select id="isExistTestByModuleNo" resultType="Integer">
 		select count(*) from qdsProductTest where qdsProCategoryId=#{qdsProCategoryId} and moduleNo=#{moduleNo}
 	</select>
+	
+	<!-- 根据moduleNo查询最后一条PASS的测试数据 -->
+	<select id="getQdsProTestByTestAtEnd" resultType="QdsProductTest">
+		select *,(select realname from users where id=t.testBy) as realname from qdsProductTest as t
+		where t.qdsProCategoryId=#{qdsProCategoryId} and t.moduleNo=#{moduleNo} and t.testResult='P' ORDER BY t.testResult DESC LIMIT 1
+	</select>
+	
+	<!-- 根据moduleNo查询最后一条FAIL的测试数据 -->
+	<select id="getQdsProTestByTestFailAtEnd" resultType="QdsProductTest">
+		select *,(select realname from users where id=t.testBy) as realname from qdsProductTest as t
+		where t.qdsProCategoryId=#{qdsProCategoryId} and t.moduleNo=#{moduleNo} and t.testResult='F' ORDER BY t.testTime DESC LIMIT 1
+	</select>
 </mapper>

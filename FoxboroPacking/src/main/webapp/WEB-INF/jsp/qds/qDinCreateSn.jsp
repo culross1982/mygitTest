@@ -13,7 +13,7 @@
 				<h2>
 					DIN S/N生成 <i class="fa fa-user"></i><small> ${sessionScope.user.realname } --- 您可以对DIN S/N进行生成</small>
 				</h2>
-				<div class="clearfix"></div>
+			<div class="clearfix"></div>
 			</div>
 			<%-- <div class="x_content">
 				<form method="post" action="${pageContext.request.contextPath}/pro/searchProList?currentPage=1">
@@ -67,7 +67,7 @@
 				<div id="datatable-responsive_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 					<div class="row">
 						<div class="col-sm-12">
-							<div class="modifyStatus" style="margin:5px 0;">
+							<div class="modifyStatus" style="margin:5px 0;"><!-- 普通用户进行对此功能进行隐藏 -->
 								<a class="btn btn-success btn-sm" id="createSn">DIN S/N生成</a>
 							</div>
 							<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"
@@ -91,7 +91,8 @@
 										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" 
 											aria-label="Last name: activate to sort column ascending">创建人员</th>
 										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" 
-											aria-label="Last name: activate to sort column ascending">创建时间
+											aria-label="Last name: activate to sort column ascending">创建时间</th>
+										<!-- 普通用户进行对此功能进行隐藏 -->
 										<th class="sorting modifyStatus" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" 
 											aria-label="Last name: activate to sort column ascending">操作</th>
 									</tr>
@@ -108,7 +109,8 @@
 											<td>${o.snEnd}</td>
 											<td>${o.realname}</td>
 											<td><fm:formatDate value="${o.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
-											<td><a class="deleteProductOrder operation modifyStatus btn btn-danger btn-xs" data-toggle="tooltip" id=${o.id } order=${o.order } data-placement="top"
+											<!-- 普通用户进行对此功能进行隐藏 -->
+											<td class="modifyStatus"><a class="deleteProductOrder operation  btn btn-danger btn-xs" data-toggle="tooltip" id=${o.id } order=${o.order } data-placement="top"
 												   style="cursor: pointer"><i class="fa fa-trash-o"></i>删除</a></td>
 										</tr>
 									</c:forEach>

@@ -63,11 +63,18 @@
 	
 	<!-- 按moduleNo查询QDS装配产品的单板个数 -->
 	<select id="getQProAssyCountByModuleNo" resultType="int">
-		SELECT COUNT(*) FROM qdsProductAssy WHERE moduleNo=#{moduleNo} and qdsProCategoryId=#{qdsProCategoryId}
+		SELECT COUNT(*) FROM qdsProductAssy WHERE qdsProCategoryId=#{qdsProCategoryId} and moduleNo=#{moduleNo} 
 	</select>
 	
 	<!-- 按moduleNo查询对应的assyNo -->
 	<select id="getAssyNoByModuleNo" resultType="String">
-		select assyNo from qdsProductAssy where moduleNo=#{moduleNo} and qdsProCategoryId=#{qdsProCategoryId}
+		select assyNo from qdsProductAssy where qdsProCategoryId=#{qdsProCategoryId} and moduleNo=#{moduleNo} 
+	</select>
+	
+	<!-- 按moduleNo查询对应的QdsProductAssy -->
+	<select id="getQdsProductAssyByModuleNo" resultType="QdsProductAssy">
+		select *,(select realName from users where id=a.assyBy) as assyRealName,
+		         (select realName from users where id=a.assyModifyBy) as assyModifyRealName
+		from qdsProductAssy as a where a.qdsProCategoryId=#{qdsProCategoryId} and a.moduleNo=#{moduleNo}
 	</select>
 </mapper>

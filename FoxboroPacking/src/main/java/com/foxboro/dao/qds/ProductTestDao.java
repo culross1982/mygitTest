@@ -79,4 +79,24 @@ public interface ProductTestDao {
 	 */
 	public Integer isExistTestByModuleNo(@Param("moduleNo") String moduleNo,
 									 @Param("qdsProCategoryId") int qdsProCategoryId) throws Exception;
+	
+	/**
+	 * 根据moduleNo查询最后一条PASS的测试数据
+	 * @param moduleNo
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exception
+	 */
+	public QdsProductTest getQdsProTestByTestAtEnd(@Param("moduleNo") String moduleNo,
+									 @Param("qdsProCategoryId") int qdsProCategoryId) throws Exception;
+	
+	/**
+	 * 根据moduleNo查询最后一条FAIL的测试数据
+	 * @param moduleNo
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exception
+	 */
+	public QdsProductTest getQdsProTestByTestFailAtEnd(@Param("moduleNo") String moduleNo,
+									 @Param("qdsProCategoryId") int qdsProCategoryId) throws Exception;
 }

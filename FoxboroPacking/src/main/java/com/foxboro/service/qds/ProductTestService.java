@@ -73,4 +73,22 @@ public interface ProductTestService {
 	 * @throws Exceptione
 	 */
 	public Integer isExistTestByModuleNo(String moduleNo,int qdsProCategoryId) throws Exception;
+	
+	/**
+	 * 根据moduleNo查询最后一条PASS的测试数据
+	 * @param moduleNo
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exception
+	 */
+	public QdsProductTest getQdsProTestByTestAtEnd(String moduleNo,int qdsProCategoryId) throws Exception;
+	
+	/**
+	 * 根据moduleNo查询最后一条FAIL的测试数据
+	 * @param moduleNo
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exception
+	 */
+	public QdsProductTest getQdsProTestByTestFailAtEnd(String moduleNo,int qdsProCategoryId) throws Exception;
 }

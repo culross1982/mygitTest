@@ -18,7 +18,21 @@ public class QdsProductAssy extends Base{
 	private String realname;	//用于查询
 	private String modifyName;	//用于查询
 	private String qdsProCategoryName;	//用于查询
+	private String assyRealName;
+	private String assyModifyRealName;
 	
+	public String getAssyRealName() {
+		return assyRealName;
+	}
+	public void setAssyRealName(String assyRealName) {
+		this.assyRealName = assyRealName;
+	}
+	public String getAssyModifyRealName() {
+		return assyModifyRealName;
+	}
+	public void setAssyModifyRealName(String assyModifyRealName) {
+		this.assyModifyRealName = assyModifyRealName;
+	}
 	public String getModifyName() {
 		return modifyName;
 	}

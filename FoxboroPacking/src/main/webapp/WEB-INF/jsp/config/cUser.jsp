@@ -11,7 +11,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-md-12 col-sm-12 col-xs-12">
+	<div class="col-md-8 col-sm-12 col-xs-12">
 		<div class="x_panel">
 			<div class="x_content">
 				<p class="text-muted font-13 m-b-30"></p>
@@ -22,15 +22,15 @@
 								cellspacing="0" width="100%" role="grid" aria-describedby="datatable-responsive_info" style="width: 100%;">
 								<thead>
 									<tr role="row" class="success">
-										<th class="sorting_asc" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 40px;"
+										<th class="sorting_asc" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="First name: activate to sort column descending" aria-sort="ascending">编号</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 40px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">用户名</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 40px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">姓名</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 40px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">用户权限</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 80px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">操作</th>
 									</tr>
 								</thead>

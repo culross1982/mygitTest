@@ -84,4 +84,12 @@ public interface ProductAssyService {
 	 * @throws Exception
 	 */
 	public String getAssyNoByModuleNo(String moduleNo,int qdsProCategoryId) throws Exception;
+	
+	/**
+	 * 按moduleNo查询对应的QdsProductAssy
+	 * @param moduleNo
+	 * @return
+	 * @throws Exception
+	 */
+	public List<QdsProductAssy> getQdsProductAssyByModuleNo(String moduleNo,int qdsProCategoryId) throws Exception;
 }
