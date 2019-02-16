@@ -2,6 +2,8 @@ package com.foxboro.service.qds;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.foxboro.entity.QdsModule;
 
 public interface ModuleService {
@@ -53,4 +55,13 @@ public interface ModuleService {
 	 * @throws Exception
 	 */
 	public String getVerByModule(String module,String qdsProCategoryName) throws Exception;
+	
+	/**
+	 * 根据part获取module
+	 * @param part
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exception
+	 */
+	public QdsModule getModuleByPart(String part,int qdsProCategoryId) throws Exception;
 }

@@ -29,7 +29,7 @@
 								<div class="form-group">
 									<label class="control-label col-md-3 col-sm-3 col-xs-12">模块串号</label>
 									<div class="col-md-9 col-sm-9 col-xs-12">
-										<input name="partNo" type="text" class="form-control col-md-7 col-xs-12" value="${qProAssy.partNo }" 
+										<input name="moduleNo" type="text" class="form-control col-md-7 col-xs-12" value="${qProAssy.moduleNo }" 
 										pattern="[0-9a-zA-Z]*" placeholder="请输入模块串号">
 									</div>
 								</div>
@@ -81,22 +81,22 @@
 				<div id="datatable-responsive_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 					<div class="row">
 						<div class="col-sm-12">
-							<div class="modifyStatus" style="margin:5px 0;">
+							<div style="margin:5px 0;">
 								<a class="btn btn-success btn-sm" id="addDinAssy">新增装配数据</a>
 							</div>
 							<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"
 								cellspacing="0" width="100%" role="grid" aria-describedby="datatable-responsive_info" style="width: 100%;">
 								<thead>
 									<tr role="row" class="success">
-										<th class="sorting_asc" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 20px;"
+										<th class="sorting_asc" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="First name: activate to sort column descending" aria-sort="ascending">编号</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 30px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">模块串号</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 20px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">单板串号</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 40px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">装配人员</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 80px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">装配时间
 											<div class="pull-right">
 												<a href="${pageContext.request.contextPath}/qds/dinDateAsc">
@@ -107,11 +107,11 @@
 												</a>
 											</div>
 										</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 40px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">修改人员</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 80px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">修改时间
-										<th class="sorting modifyStatus" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 70px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">操作</th>
 									</tr>
 								</thead>
@@ -119,17 +119,17 @@
 									<c:forEach var="a" items="${qdsProductAssyList }" varStatus="status">
 										<tr role="row" class="odd">
 											<td tabindex="0" class="sorting_1">${a.id }</td>
-											<td>${a.partNo}</td>
+											<td>${a.moduleNo}</td>
 											<td>${a.assyNo}</td>
 											<td>${a.realname}</td>
 											<td><fm:formatDate value="${a.assyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
 											<td>${a.modifyName}</td>
 											<td><fm:formatDate value="${a.assyModifyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
-											<td><a class="modifyDinAssy operation btn btn-info btn-xs" data-toggle="tooltip" id=${a.id } realname=${a.realname } partNo=${a.partNo } assyNo=${a.assyNo } 
+											<td><a class="modifyDinAssy operation btn btn-info btn-xs" data-toggle="tooltip" id=${a.id } realname=${a.realname } moduleNo=${a.moduleNo } assyNo=${a.assyNo } 
 											       assyTime=<fm:formatDate value="${a.assyTime}" pattern="yyyy-MM-dd HH:mm:ss" /> data-placement="top" 
-											       data-original-title="修改装配数据" style="cursor: pointer"><i class="fa fa-pencil"></i>修改</a>&nbsp;&nbsp;
-												<a class="deleteDinAssy operation modifyStatus btn btn-danger btn-xs" data-toggle="tooltip" id=${a.id } assyNo=${a.assyNo } data-placement="top"
-												   data-original-title="删除装配数据" style="cursor: pointer"><i class="fa fa-trash-o"></i>删除</a></td>
+											       style="cursor: pointer"><i class="fa fa-pencil"></i>修改</a>&nbsp;&nbsp;
+												<a class="deleteDinAssy operation btn btn-danger btn-xs" data-toggle="tooltip" id=${a.id } assyNo=${a.assyNo } moduleNo=${a.moduleNo }
+												   style="cursor: pointer"><i class="fa fa-trash-o"></i>删除</a></td>
 										</tr>
 									</c:forEach>
 								</tbody>
@@ -183,8 +183,7 @@
 				</div>
 				<div class="modal-body">
 
-					<h5 id="myModalRealname"></h5>
-					<input class="hide" id="myModalUsername" name="myModalUsername"></input>
+					<input class="hide" id="qdsProCategoryId" value="1"></input>	<!-- 给ajax提供产品分类 -->
 					<!-- <form class="form-horizontal form-label-left input_mask" id="input_mask"> -->
 					<div class="form-horizontal form-label-left input_mask" id="input_mask">
 						<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"
@@ -192,20 +191,20 @@
 							<div class="form-group">
 								<label class="control-label col-md-3 col-sm-3 col-xs-12">模块串号</label>
 								<div class="col-md-9 col-sm-9 col-xs-12">
-									<input name="partNo" id="partNo" type="text" class="form-control col-md-4 col-xs-12" placeholder="请输入字母或数字">
+									<input name="moduleNo" id="moduleNo" type="text" class="form-control col-md-4 col-xs-12" placeholder="请输入字母或数字">
 									<span class="control-label col-md-5 col-sm-5 col-xs-12 "></span>
 								</div>
 								
 							</div>
 							<div class="form-group">
-								<label class="control-label col-md-3 col-sm-3 col-xs-12">单板串号（P）</label>
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">单板串号</label>
 								<div class="col-md-9 col-sm-9 col-xs-12">
 									<input name="assyNoP" id="assyNoP" type="text" class="form-control col-md-7 col-xs-12" placeholder="请输入字母或数字">
 									<span class="control-label col-md-5 col-sm-5 col-xs-12 "></span>
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="control-label col-md-3 col-sm-3 col-xs-12">单板串号（M）</label>
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">单板串号</label>
 								<div class="col-md-9 col-sm-9 col-xs-12">
 									<input name="assyNoM" id="assyNoM" type="text" class="form-control col-md-7 col-xs-12" placeholder="请输入字母或数字">
 									<span class="control-label col-md-5 col-sm-5 col-xs-12"></span>
@@ -260,8 +259,7 @@
 				</div>
 				<div class="modal-body">
 
-					<h5 id="myModalRealname"></h5>
-					<input class="hide" id="myModalUsername" name="myModalUsername"></input>
+					<input class="hide" id="qdsProCategoryId" value="1"></input>	<!-- 给ajax提供产品分类 -->
 					<form class="form-horizontal form-label-left input_mask" id="input_mask">
 						<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"
 							cellspacing="0" width="100%" role="grid" aria-describedby="datatable-responsive_info">
@@ -269,7 +267,7 @@
 							<div class="form-group">
 								<label class="control-label col-md-3 col-sm-3 col-xs-12">模块串号</label>
 								<div class="col-md-9 col-sm-9 col-xs-12">
-									<input name="partNoModify" id="partNoModify" type="text" class="form-control col-md-4 col-xs-12" >
+									<input name="moduleNoModify" id="moduleNoModify" type="text" class="form-control col-md-4 col-xs-12" disabled="disabled">
 									<span class="control-label col-md-5 col-sm-5 col-xs-12 "></span>
 								</div>
 								

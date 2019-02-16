@@ -68,6 +68,7 @@ $("#module1").bind("change input",function(){
 	$("#createSnBtn").addClass("hide");
 	$("#review").children().remove();
 	$("#ver").val("");
+	$("#ver").next().html("");
 	flagModule=false;
 	var obj=$(this);
 	var qdsProCategoryName=$("#qdsProCategoryName").val();
@@ -248,10 +249,11 @@ $(".deleteProductOrder").click(function(){
 	var obj=$(this);
 	var id=obj.attr("id");
 	var order=obj.attr("order");
+	var qdsProCategoryId=1;	//1表示产品分类为DIN
 	if(confirm("你确定要删除【"+order+"】的数据信息吗？")){
 		$.ajax({
 			url:"deleteProductOrder.ajax",
-			data:{"id":id},
+			data:{"id":id,"qdsProCategoryId":qdsProCategoryId},
 			type:"post",
 			dataType:"json",
 			success:function(data){
@@ -259,11 +261,13 @@ $(".deleteProductOrder").click(function(){
 					humane.log("删除工作令数据失败");
 				}else if(data.result=="productFailed"){
 					humane.log("删除产品数据失败");
-				}else if(data.result="success"){
+				}else if(data.result=="success"){
 					humane.log("删除成功！");
 					obj.parents("tr").remove();
-				}else if(daat.result="empty"){
+				}else if(data.result=="empty"){
 					humane.log("删除数据不存在！");
+				}else if(data.result=="isExsitAssyStatus"){
+					humane.log("此工作令的装配数据已存在，不可删除！");
 				}
 			},
 			error:function(){

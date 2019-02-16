@@ -196,9 +196,11 @@ public class ConfigController {
 			String keys1="moduleList"+username;
 			String keys2="packingMainList"+username;
 			String keys3="configMainList"+username;
+			String keys4="qdsMainList"+username;
 			redisAPI.del(keys1);
 			redisAPI.del(keys2);
 			redisAPI.del(keys3);
+			redisAPI.del(keys4);
 			result.put("modifyResult", "success");
 		} catch (Exception e) {
 			result.put("modifyResult", "failed");

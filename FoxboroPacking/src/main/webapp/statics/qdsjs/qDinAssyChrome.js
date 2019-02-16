@@ -1,3 +1,6 @@
+var assyNoModify=false;
+var qdsProCategoryId=1;	//1表示产品分类为DIN
+
 $(".daterange input").each(function() {
 	var $this = $(this);
 	$this.daterangepicker({
@@ -65,47 +68,58 @@ $("#addDinAssy").click(function () {
 
 //重置窗口
 function resetModal(){
-	setTimeout(function(){$("#partNo").val("");	
+	setTimeout(function(){$("#moduleNo").val("");	
 	$("#assyNoP").val("");
+	$("#assyNoP").removeAttr("disabled");
 	$("#assyNoM").val("");
-	$("#partNo").next().html("");
+	$("#moduleNo").next().html("");
 	$("#assyNoP").next().html("");
 	$("#assyNoM").next().html("");
-	$("#partNo").focus();},500);
+	$("#moduleNo").focus();},500);
 }
 
-/*新增界面的卡件串号*/
-$("#partNo").change(function(){
+/*新增界面的模块串号*/
+$("#moduleNo").change(function(){
+	$("#assyNoP").val("");	//模块串号改变时重置单板串号及其提示区
+	$("#assyNoM").val("");
+	$("#assyNoP").next().html("");
+	$("#assyNoM").next().html("");
+	$("#assyNoP").removeAttr("disabled");
+	$("#assyNoP").attr("placeholder","请输入字母或数字");
+	$("#assyNoM").removeAttr("disabled");
+	$("#assyNoM").attr("placeholder","请输入字母或数字");
 	var obj=$(this);
-	var result=partNoCheck(obj);
+	var result=moduleNoCheck(obj);
 	if(result=="true"){		//返回结果为ture则光标指向下一栏
 		$("#assyNoP").focus();
 	}
 })
 
-/*修改界面的卡件串号*/
-$("#partNoModify").change(function(){
+/*修改界面的模块串号*/
+$("#moduleNoModify").change(function(){
+	assyNoModify=false;
 	var obj=$(this);
-	partNoCheck(obj);
+	moduleNoCheck(obj);
 })
 
-/*卡件串号检查通用方法*/
-function partNoCheck(obj){
+/*模块串号检查通用方法*/
+//原始方法：已存在的模块串号不提供单板信息
+/*function moduleNoCheck(obj){
 	var objResult=new Object;	//定义返回结果
-	var partNo=obj.val();
+	var moduleNo=obj.val();
 	$.ajax({
-		url:'dinAddPartNo.ajax',
-		data:{'partNo':partNo},
+		url:'dinAddModuleNo.ajax',
+		data:{'moduleNo':moduleNo},
 		dataType:'json',
 		type:'post',
 		async:false,
 		success:function(result){
 			if(result.data=="empty"){
 				obj.next().css("color","red");
-				obj.next().html("卡件串号不可为空");
+				obj.next().html("模块串号不可为空！");
 			}else if(result.data=="lengthError"){
 				obj.next().css("color","red");
-				obj.next().html("长度错误（19位）");
+				obj.next().html("长度错误（19位）！");
 			}else if(result.data=="exsit"){
 				obj.next().css("color","red");
 				obj.next().html("串号已存在，请重输");
@@ -114,7 +128,7 @@ function partNoCheck(obj){
 				obj.next().html("操作失败");
 			}else if(result.data=="incorrect"){
 				obj.next().css("color","red");
-				obj.next().html("串号不能使用'I'或'O'");
+				obj.next().html("串号不能使用'i'或'o'");
 			}else if(result.data=="success"){
 				obj.next().css("color","#3DCD58");
 				obj.next().html("pass");
@@ -127,33 +141,96 @@ function partNoCheck(obj){
 		}
 	})
 	return objResult;
+}*/
+//新方法：已存在的模块串号提供相关的单板信息
+function moduleNoCheck(obj){
+	var objResult=new Object;	//定义返回结果
+	var moduleNo=obj.val();
+	$.ajax({
+		url:'dinAddModuleNo.ajax',
+		data:{'moduleNo':moduleNo,'qdsProCategoryId':1},
+		dataType:'json',
+		type:'post',
+		async:false,
+		success:function(result){
+			if(result.data=="empty"){
+				obj.next().css("color","red");
+				obj.next().html("模块串号不可为空！");
+			}else if(result.data=="lengthError"){
+				obj.next().css("color","red");
+				obj.next().html("长度错误（19位）！");
+			}else if(result.data=="exsit"){
+				obj.next().css("color","red");
+				obj.next().html("装配数据已存在！");
+				$("#assyNoP").attr("disabled","disabled");
+				$("#assyNoP").attr("placeholder","");
+				$("#assyNoM").attr("disabled","disabled");
+				$("#assyNoM").attr("placeholder","");
+			}else if(result.data=="failed"){
+				obj.next().css("color","red");
+				obj.next().html("操作失败");
+			}else if(result.data=="incorrect"){
+				obj.next().css("color","red");
+				obj.next().html("串号不能使用'i'或'o'");
+			}else if(result.data=="success"){
+				obj.next().css("color","#3DCD58");
+				obj.next().html("pass");
+				objResult="true";
+			}else if(result.data=="moreCount"){
+				obj.next().css("color","red");
+				obj.next().html("单板数据个数超范围");
+			}else if(result.data=="noexsitSn"){
+				obj.next().css("color","red");
+				obj.next().html("此串号未生成过！");
+			}else{
+				obj.next().css("color","#f0ad4e");
+				obj.next().html("已有部分装配数据！");
+				$("#assyNoP").val(result.data);	//界面显示已存在的单板信息
+				$("#assyNoP").attr("disabled","disabled");
+				$("#assyNoP").next().html("pass");
+			}
+		},
+		error:function(){
+			obj.next().css("color","red");
+			obj.next().html("ajax错误");
+		}
+	})
+	return objResult;
 }
 
-/*新增界面的部件串号*/
+/*新增界面的单板串号*/
 $("#assyNoP").change(function(){
 	var obj=$(this);
+	var qdsProCategoryId=$("#qdsProCategoryId").val();
+	var moduleNo=$("#moduleNo").val();
 	if($("#assyNoM").val()==obj.val()){
 		obj.next().css("color","red");
 		obj.next().html("串号重复，请重输");
 	}else{
 		$.ajax({
 			url:'dinAddAssyNo.ajax',
-			data:{'assyNo':obj.val()},
+			data:{'assyNo':obj.val(),'qdsProCategoryId':qdsProCategoryId,'moduleNo':moduleNo},
 			dataType:'json',
 			type:'post',
 			success:function(result){
 				if(result.data=="empty"){
 					obj.next().css("color","red");
-					obj.next().html("部件串号不可为空");
+					obj.next().html("单板串号不可为空!");
 				}else if(result.data=="lengthError"){
 					obj.next().css("color","red");
-					obj.next().html("长度错误（12位）");
+					obj.next().html("长度错误（12位）!");
 				}else if(result.data=="exsit"){
 					obj.next().css("color","red");
-					obj.next().html("串号已存在，请重输");
+					obj.next().html("串号已存在，请重输!");
 				}else if(result.data=="failed"){
 					obj.next().css("color","red");
-					obj.next().html("操作失败");
+					obj.next().html("操作失败!");
+				}else if(result.data=="databaseError"){
+					obj.next().css("color","red");
+					obj.next().html("check基础数据错误!");
+				}else if(result.data=="databaseEmpty"){
+					obj.next().css("color","red");
+					obj.next().html("无对应的基础数据!");
 				}else if(result.data=="success"){
 					obj.next().css("color","#3DCD58");
 					obj.next().html("pass");
@@ -170,19 +247,21 @@ $("#assyNoP").change(function(){
 
 $("#assyNoM").change(function(){
 	var obj=$(this);
+	var qdsProCategoryId=$("#qdsProCategoryId").val();
+	var moduleNo=$("#moduleNo").val();
 	if(obj.val()==$("#assyNoP").val()){
 		obj.next().css("color","red");
 		obj.next().html("串号重复，请重输");
 	}else{
 		$.ajax({
 			url:'dinAddAssyNo.ajax',
-			data:{'assyNo':obj.val()},
+			data:{'assyNo':obj.val(),'qdsProCategoryId':qdsProCategoryId,'moduleNo':moduleNo},
 			dataType:'json',
 			type:'post',
 			success:function(result){
 				if(result.data=="empty"){
 					obj.next().css("color","red");
-					obj.next().html("部件串号不可为空");
+					obj.next().html("单板串号不可为空");
 				}else if(result.data=="lengthError"){
 					obj.next().css("color","red");
 					obj.next().html("长度错误（12位）");
@@ -192,6 +271,12 @@ $("#assyNoM").change(function(){
 				}else if(result.data=="failed"){
 					obj.next().css("color","red");
 					obj.next().html("操作失败");
+				}else if(result.data=="databaseError"){
+					obj.next().css("color","red");
+					obj.next().html("check基础数据错误!");
+				}else if(result.data=="databaseEmpty"){
+					obj.next().css("color","red");
+					obj.next().html("无对应的基础数据!");
 				}else if(result.data=="success"){
 					obj.next().css("color","#3DCD58");
 					obj.next().html("pass");
@@ -204,21 +289,22 @@ $("#assyNoM").change(function(){
 			}
 		})
 	}
-
 })
 
-/*修改界面的部件串号*/
+/*修改界面的单板串号*/
 $("#assyNoModify").change(function(){
 	var obj=$(this);
+	var qdsProCategoryId=$("#qdsProCategoryId").val();
+	var moduleNoModify=$("#moduleNoModify").val();
 	$.ajax({
 		url:'dinAddAssyNo.ajax',
-		data:{'assyNo':obj.val()},
+		data:{'assyNo':obj.val(),'qdsProCategoryId':qdsProCategoryId,'moduleNo':moduleNoModify},
 		dataType:'json',
 		type:'post',
 		success:function(result){
 			if(result.data=="empty"){
 				obj.next().css("color","red");
-				obj.next().html("部件串号不可为空");
+				obj.next().html("单板串号不可为空");
 			}else if(result.data=="lengthError"){
 				obj.next().css("color","red");
 				obj.next().html("长度错误（12位）");
@@ -228,9 +314,16 @@ $("#assyNoModify").change(function(){
 			}else if(result.data=="failed"){
 				obj.next().css("color","red");
 				obj.next().html("操作失败");
+			}else if(result.data=="databaseError"){
+				obj.next().css("color","red");
+				obj.next().html("check基础数据错误!");
+			}else if(result.data=="databaseEmpty"){
+				obj.next().css("color","red");
+				obj.next().html("无对应的基础数据!");
 			}else if(result.data=="success"){
 				obj.next().css("color","#3DCD58");
 				obj.next().html("pass");
+				assyNoModify=true;
 				$("#assyNoM").focus();
 			}
 		},
@@ -249,10 +342,37 @@ $("#addAssyDataBtn").click(function(){
 /*提交新增*/
 function doAdd(){
 	var assy=new Object;
-	assy.partNo=$("#partNo").val();
-	assy.assyNoP=$("#assyNoP").val();
-	assy.assyNoM=$("#assyNoM").val();
-	if($("#assyNoM").next().html()=="pass" && $("#assyNoP").next().html()=="pass" && $("#partNo").next().html()=="pass"){
+	//无装配数据
+	if($("#assyNoM").next().html()=="pass" && $("#assyNoP").next().html()=="pass" && $("#moduleNo").next().html()=="pass"){
+		assy.moduleNo=$("#moduleNo").val();
+		assy.assyNoP=$("#assyNoP").val();
+		assy.assyNoM=$("#assyNoM").val();
+		$.ajax({
+			url:"dinDoAddAssy.ajax",
+			data:{"assy":JSON.stringify(assy)},
+			type:"post",
+			dataType:"json",
+			success:function(data){
+				if(data.result=="success"){
+					humane.log("新增成功！");
+					$("#count").val($("#count").val()*1+1);
+					resetModal();	//重置弹窗
+				}else if(data.reusult=="failed"){
+					humane.log("新增失败！");
+				}else if(data.result=="error"){
+					humane.log("系统错误！");
+				}
+			},
+			error:function(){
+				humane.log("ajax错误！");
+			}
+		})
+	}
+	//已有部分装配数据
+	if($("#assyNoM").next().html()=="pass" && $("#assyNoP").next().html()=="pass" && $("#moduleNo").next().html()=="已有部分装配数据！"){
+		assy.moduleNo=$("#moduleNo").val();
+		assy.assyNoP=null;
+		assy.assyNoM=$("#assyNoM").val();
 		$.ajax({
 			url:"dinDoAddAssy.ajax",
 			data:{"assy":JSON.stringify(assy)},
@@ -276,15 +396,16 @@ function doAdd(){
 	}
 }
 
-/*删除装配数据*/
+/*按id删除装配数据*/
 $(".deleteDinAssy").click(function(){
 	var obj=$(this);
 	var assyNo=obj.attr("assyNo");
+	var moduleNo=obj.attr("moduleNo");
 	var id=obj.attr("id");
 	if(confirm("你确定要删除【"+assyNo+"】的数据信息吗？")){
 		$.ajax({
 			url:"delAssyDataById.ajax",
-			data:{"id":id},
+			data:{"id":id,"moduleNo":moduleNo,"qdsProCategoryId":qdsProCategoryId},
 			type:"post",
 			dataType:"json",
 			success:function(data){
@@ -295,6 +416,8 @@ $(".deleteDinAssy").click(function(){
 					humane.log("删除失败！");
 				}else if(data.result=="error"){
 					humane.log("系统错误！");
+				}else if(data.result=="isExistTest"){
+					humane.log("已存在测试数据，无法删除！");
 				}
 			},
 			error:function(){
@@ -314,7 +437,7 @@ $(".modifyDinAssy").click(function () {
 	var obj=$(this);
 	$('#modifyModal').modal();	//弹出窗口
 	//窗口载入数据
-	$("#partNoModify").val(obj.attr("partNo"));
+	$("#moduleNoModify").val(obj.attr("moduleNo"));
 	$("#assyNoModify").val(obj.attr("assyNo"));
 	$("#assyTimeModify").val(obj.attr("assyTime"));
 	$("#realnameModify").val(obj.attr("realname"));
@@ -324,26 +447,31 @@ $(".modifyDinAssy").click(function () {
 /*点击"修改"按钮进行修改*/
 $("#modifyDinAssyBtn").click(function(){
 	var assyModify=new Object();
-	assyModify.partNoModify=$("#partNoModify").val();
+	assyModify.moduleNoModify=$("#moduleNoModify").val();
 	assyModify.assyNoModify=$("#assyNoModify").val();
 	assyModify.id=$("#idModify").val();
-	$.ajax({
-		url:"modifyProductAssy.ajax",
-		data:{"assyModify":JSON.stringify(assyModify)},
-		type:"post",
-		dataType:"json",
-		success:function(data){
-			if(data.result=="success"){
-				humane.log("修改成功！");
-				window.setTimeout("window.location.href='dinAssyWindows'",1500);//弹窗后延迟跳转网页
-			}else if(data.reusult=="failed"){
-				humane.log("修改失败！");
+	if(assyNoModify==true){
+		$.ajax({
+			url:"modifyProductAssy.ajax",
+			data:{"assyModify":JSON.stringify(assyModify)},
+			type:"post",
+			dataType:"json",
+			success:function(data){
+				if(data.result=="success"){
+					humane.log("修改成功！");
+					window.setTimeout("window.location.href='dinAssyWindows'",1500);//弹窗后延迟跳转网页
+				}else if(data.result=="failed"){
+					humane.log("修改失败！");
+				}else if(data.result=="isExistTest"){
+					humane.log("已存在测试数据，无法修改！")
+				}
+			},
+			error:function(){
+				humane.log("ajax错误！");
 			}
-		},
-		error:function(){
-			humane.log("ajax错误！");
-		}
-	})
+		})
+	}
+	
 })
 
 /*动态显示时间*/

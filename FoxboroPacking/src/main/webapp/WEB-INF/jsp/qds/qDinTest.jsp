@@ -42,15 +42,15 @@
 								<div class="form-group">
 									<label class="control-label col-md-3 col-sm-3 col-xs-12">模块串号</label>
 									<div class="col-md-9 col-sm-9 col-xs-12">
-										<input name="testNo" type="text" class="form-control col-md-7 col-xs-12" value="${qProTest.testNo }" pattern="[0-9a-zA-Z]*" placeholder="请输入模块串号">
+										<input name="moduleNo" type="text" class="form-control col-md-7 col-xs-12" value="${qProTest.moduleNo }" pattern="[0-9a-zA-Z]*" placeholder="请输入模块串号">
 									</div>
 								</div>
 							</li>
 							<li style="width: 200px">
 								<div class="form-group">
-									<label class="control-label col-md-5 col-sm-5 col-xs-6">测试人员</label>
+									<label class="control-label col-md-5 col-sm-5 col-xs-6">上传人员</label>
 									<div class="col-md-7 col-sm-7 col-xs-6">
-										<input name="realname" type="text" class="form-control col-md-7 col-xs-12" value="${qProTest.realname }" placeholder="请输入人员"> 
+										<input name="realname" type="text" class="form-control col-md-7 col-xs-12" value="${qProTest.realname}" placeholder="请输入人员"> 
 									</div>
 								</div>
 							</li>
@@ -71,7 +71,7 @@
 				<div id="datatable-responsive_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 					<div class="row">
 						<div class="col-sm-12">
-							<div class="modifyStatus">
+							<div>
 								<form action="${pageContext.request.contextPath}/qds/addDinTestFromLog" method="post" enctype="multipart/form-data"
 									onsubmit="return checkSuffix();" class="form-inline" style="margin:5px 0;">
 									<div class="form-group">
@@ -85,36 +85,40 @@
 									</div>
 								</form>
 							</div>
+							<div id="uploadFailed">
+							</div>
 							<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"
 								cellspacing="0" width="100%" role="grid" aria-describedby="datatable-responsive_info" style="width: 100%;">
 								<thead>
 									<tr role="row" class="success">
-										<th class="sorting_asc" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 20px;"
+										<th class="sorting_asc" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="First name: activate to sort column descending" aria-sort="ascending">编号</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 60px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">模块串号</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 40px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">代码</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 50px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">测试状态</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 30px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">状态</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 50px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">测试结果</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 40px;"
-											aria-label="Last name: activate to sort column ascending">测试设备<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 50px;"
-											aria-label="Last name: activate to sort column ascending">测试人员</th>
-										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 80px;"
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
+											aria-label="Last name: activate to sort column ascending">测试设备<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
+											aria-label="Last name: activate to sort column ascending">上传人员</th>
+										<th class="sorting" tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">测试时间 </th>	
-										<th class="sorting " tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1" style="width: 60px;"
+										<th class="sorting " tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
 											aria-label="Last name: activate to sort column ascending">测试描述</th>
+										<th class="sorting " tabindex="0" aria-controls="datatable-responsive" rowspan="1" colspan="1"
+											aria-label="Last name: activate to sort column ascending">维修记录</th>
 									</tr>
 								</thead>
 								<tbody>
 									<c:forEach var="t" items="${qdsProductTestList }" varStatus="status">
 										<tr role="row" class="odd">
 											<td tabindex="0" class="sorting_1">${t.id }</td>
-											<td>${t.testNo}</td>
+											<td>${t.moduleNo}</td>
 											<td>${t.testCode}</td>
 											<td>${t.testStatus}</td>
 											<td>${t.status}</td>
@@ -122,7 +126,18 @@
 											<td>${t.testEquipment}</td>
 											<td>${t.realname}</td>
 											<td><fm:formatDate value="${t.testTime}" pattern="yyyy-MM-dd HH:mm" /></td>
-											<td>${t.discription}</td>
+											<td>${t.testDiscription}</td>
+											<td>
+												<c:if test="${t.errorStatus==0}"></c:if>
+												<c:if test="${t.errorStatus==1}">
+													<a class="insertError operation btn btn-danger btn-xs" data-toggle="tooltip" id=${t.id } moduleNo=${t.moduleNo } testDiscription=${t.testDiscription }
+											        data-placement="top" style="cursor: pointer"><i class="fa fa-pencil"></i>待输入</a>
+											    </c:if>
+											    <c:if test="${t.errorStatus==2}">
+													<a class="modifyError operation btn btn-info btn-xs" data-toggle="tooltip" id=${t.id } moduleNo=${t.moduleNo } testDiscription=${t.testDiscription }
+											        errorCodeId=${t.errorCodeId } remark=${t.remark } data-placement="top" style="cursor: pointer"><i class="fa fa-pencil"></i>修改</a>
+											    </c:if>
+											</td>
 										</tr>
 									</c:forEach>
 								</tbody>
@@ -163,6 +178,181 @@
 			</div>
 		</div>
 	</div>
+	
+	<!-- 输入维修数据 start -->
+	<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close closeModal" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">输入维修数据</h4>
+				</div>
+				<div class="modal-body">
+
+					<input class="hide" id="qdsProCategoryId" value="1"></input>	<!-- 给ajax提供产品分类 -->
+					<input class="hide" id="productTestId"></input>	<!-- 给ajax提供qdsProductTestId -->
+					<!-- <form class="form-horizontal form-label-left input_mask" id="input_mask"> -->
+					<div class="form-horizontal form-label-left input_mask" id="input_mask">
+						<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"
+							cellspacing="0" width="100%" role="grid" aria-describedby="datatable-responsive_info">
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">模块串号</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input name="moduleNo" id="moduleNo" type="text" class="form-control col-md-4 col-xs-12" disabled="disabled">
+									<span class="control-label col-md-5 col-sm-5 col-xs-12 "></span>
+								</div>
+								
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">测试描述</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input name="testDiscription" id="testDiscription" type="text" class="form-control col-md-7 col-xs-12" disabled="disabled">
+									<span class="control-label col-md-5 col-sm-5 col-xs-12 "></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">不良描述</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<select id="errorCodeId" name="errorCodeId" class="form-control col-md-7 col-xs-12"  style="font-size:8px;width:200px;">
+										<option value="14">重新测试</option>
+ 											<c:forEach items="${qdsErrorCodeList }" var="e">
+												<option value="${e.id }">${e.description}</option>
+											</c:forEach>
+									</select>
+									<span class="control-label col-md-5 col-sm-5 col-xs-12"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">输入者</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input name="repairBy" id="repairBy" type="text" class="form-control col-md-7 col-xs-12" disabled="disabled" value="${sessionScope.user.realname}">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">备注</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input name="remark" id="remark" type="text" class="form-control col-md-7 col-xs-12">
+								</div>
+							</div>
+						</table>
+					</div>
+					<!-- </form> -->
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default closeModal" data-dismiss="modal">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+						关闭
+					</button>
+					<button type="button" id="addErrorBtn" class="btn btn-success" >
+						<span class="glyphicon glyphicon-floppy-disk" style="color:white" aria-hidden="true"></span>
+						提交
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 输入维修数据 end -->
+	
+	<!-- 修改维修数据 start -->
+	<div class="modal fade" id="modifyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close closeModal" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">修改维修数据</h4>
+				</div>
+				<div class="modal-body">
+
+					<input class="hide" id="qdsProCategoryId" value="1"></input>	<!-- 给ajax提供产品分类 -->
+					<input class="hide" id="productTestId1"></input>	<!-- 给ajax提供qdsProductTestId -->
+					<!-- <form class="form-horizontal form-label-left input_mask" id="input_mask"> -->
+					<div class="form-horizontal form-label-left input_mask" id="input_mask">
+						<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"
+							cellspacing="0" width="100%" role="grid" aria-describedby="datatable-responsive_info">
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">模块串号</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input name="moduleNo1" id="moduleNo1" type="text" class="form-control col-md-4 col-xs-12" disabled="disabled">
+									<span class="control-label col-md-5 col-sm-5 col-xs-12 "></span>
+								</div>
+								
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">测试描述</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input name="testDiscription1" id="testDiscription1" type="text" class="form-control col-md-7 col-xs-12" disabled="disabled">
+									<span class="control-label col-md-5 col-sm-5 col-xs-12 "></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">不良描述</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<select id="errorCodeId1" name="errorCodeId1" class="form-control col-md-7 col-xs-12"  style="font-size:8px;width:200px;">
+										<option></option>
+ 											<c:forEach items="${qdsErrorCodeList }" var="e">
+												<option value="${e.id }">${e.description}</option>
+											</c:forEach>
+									</select>
+									<span class="control-label col-md-5 col-sm-5 col-xs-12"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">输入者</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input name="repairBy1" id="repairBy1" type="text" class="form-control col-md-7 col-xs-12" disabled="disabled" value="${sessionScope.user.realname}">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">备    注</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input name="remark1" id="remark1" type="text" class="form-control col-md-7 col-xs-12">
+								</div>
+							</div>
+						</table>
+					</div>
+					<!-- </form> -->
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default closeModal" data-dismiss="modal">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+						关闭
+					</button>
+					<button type="button" id="modifyErrorBtn" class="btn btn-success" >
+						<span class="glyphicon glyphicon-floppy-disk" style="color:white" aria-hidden="true"></span>
+						修改
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 修改维修数据 end -->
 </div>
 <%@include file="common/footer.jsp"%>
-<script src="${pageContext.request.contextPath }/statics/qdsjs/qDinTest.js"></script>
+<%-- <script src="${pageContext.request.contextPath }/statics/qdsjs/qDinTest.js"></script> --%>
+<script type="text/javascript">
+	function getBrowser() {
+		var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+		var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1; //判断是否IE<11浏览器   
+		var isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf("rv:11.0") > -1;
+		var isChrome = userAgent.indexOf("Chrome") > -1;
+		if (isIE11) { //判断是否IE浏览器
+			return "IE11";
+		}else if (isChrome) {
+			return "Chrome";
+		}
+	}
+
+	$(document).ready(function() {
+		var scriptNode = document.createElement("script");
+		 if (getBrowser() == "IE11") {
+			scriptNode.src="${pageContext.request.contextPath }/statics/qdsjs/qDinTest.js";
+		} else if (getBrowser() == "Chrome") {
+			scriptNode.src="${pageContext.request.contextPath }/statics/qdsjs/qDinTestChrome.js";
+		} 
+		$("body").append(scriptNode);
+	})
+</script>

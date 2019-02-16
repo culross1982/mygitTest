@@ -5,7 +5,7 @@ import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public class QdsProductTest extends Base{
-	private String testNo;
+	private String moduleNo;
 	private String testCode;
 	private String testStatus;
 	private String status;
@@ -14,23 +14,37 @@ public class QdsProductTest extends Base{
 	private Date testTime;
 	private int testBy;
 	private String testEquipment;
-	private String discription;
-	private int qdsProCategoryId;
+	private String testDiscription;
+	private Integer errorStatus;
 	
 	private String realname;
-	private String qdsProCategoryName;	//用于查询
-	
+	private int qdsProCategoryId;	//用于查询
+	private String errorCodeId;
+	private String remark;
+
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public String getErrorCodeId() {
+		return errorCodeId;
+	}
+	public void setErrorCodeId(String errorCodeId) {
+		this.errorCodeId = errorCodeId;
+	}
 	public String getRealname() {
 		return realname;
 	}
 	public void setRealname(String realname) {
 		this.realname = realname;
 	}
-	public String getTestNo() {
-		return testNo;
+	public String getModuleNo() {
+		return moduleNo;
 	}
-	public void setTestNo(String testNo) {
-		this.testNo = testNo;
+	public void setModuleNo(String moduleNo) {
+		this.moduleNo = moduleNo;
 	}
 	public String getTestEquipment() {
 		return testEquipment;
@@ -74,11 +88,17 @@ public class QdsProductTest extends Base{
 	public void setTestBy(int testBy) {
 		this.testBy = testBy;
 	}
-	public String getDiscription() {
-		return discription;
+	public String getTestDiscription() {
+		return testDiscription;
 	}
-	public void setDiscription(String discription) {
-		this.discription = discription;
+	public void setTestDiscription(String testDiscription) {
+		this.testDiscription = testDiscription;
+	}
+	public Integer getErrorStatus() {
+		return errorStatus;
+	}
+	public void setErrorStatus(Integer errorStatus) {
+		this.errorStatus = errorStatus;
 	}
 	public int getQdsProCategoryId() {
 		return qdsProCategoryId;
@@ -86,12 +106,5 @@ public class QdsProductTest extends Base{
 	public void setQdsProCategoryId(int qdsProCategoryId) {
 		this.qdsProCategoryId = qdsProCategoryId;
 	}
-	public String getQdsProCategoryName() {
-		return qdsProCategoryName;
-	}
-	public void setQdsProCategoryName(String qdsProCategoryName) {
-		this.qdsProCategoryName = qdsProCategoryName;
-	}
-	
-	
+		
 }

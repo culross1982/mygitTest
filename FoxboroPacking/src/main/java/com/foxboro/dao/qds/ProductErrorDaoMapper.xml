@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foxboro.dao.qds.ProductErrorDao">
+	
+	<!-- 新增产品不良记录 -->
+	<insert id="addProductError" parameterType="QdsProductError">
+		insert into qdsProductError value 
+		(null,#{moduleNo},#{errorCodeId},#{repairBy},now(),#{remark},#{qdsProCategoryId},#{qdsProductTestId})
+	</insert>
+	
+	<!-- 修改维修数据 -->
+	<update id="updateProductError">
+		UPDATE qdsProductError SET errorCodeId=#{errorCodeId},remark=#{remark} WHERE qdsProductTestId=#{qdsProductTestId}; 
+	</update>
+</mapper>

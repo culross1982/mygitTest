@@ -55,4 +55,14 @@ public interface ProductOrderDao {
 	 * @throws Exception
 	 */
 	public void delProductOrderById(int id) throws Exception;
+	
+	/**
+	 * 根据id获取对应的QdsProductOrder
+	 * @param id
+	 * @param qdsProCategoryId
+	 * @return
+	 * @throws Exception
+	 */
+	public QdsProductOrder getQdsProOrderById(@Param("id") int id,
+											  @Param("qdsProCategoryId") int qdsProCategoryId) throws Exception;
 }

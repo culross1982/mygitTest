@@ -83,17 +83,18 @@
 												<c:if test="${p.assyStatus==1}"><i class="glyphicon glyphicon-ok"></i></c:if>
 											</td>
 											<td>
-												<c:if test="${p.testStatus==null || p.testStatus=='F'}"><i class="glyphicon glyphicon-remove"></i></c:if>
-												<c:if test="${p.testStatus=='P'}"><i class="glyphicon glyphicon-ok"></i></c:if>
+												<c:if test="${p.testStatus==0}"><i class="glyphicon glyphicon-remove"></i></c:if>
+												<c:if test="${p.testStatus==1}"><i class="glyphicon glyphicon-ok"></i></c:if>
 											</td>
 											<td>
 												<c:if test="${p.inspectionStatus==0}"><i class="glyphicon glyphicon-remove"></i></c:if>
 												<c:if test="${p.inspectionStatus==1}"><i class="glyphicon glyphicon-ok"></i></c:if>				
 											</td>
 											<td>${p.qdsProCategoryName}</td>
-											<td><a class="moreHistory operation modifyStatus btn btn-success btn-xs" data-toggle="tooltip" id=${p.id } data-placement="top"
-													style="cursor: pointer"><i class="fa fa-table"></i>详情
-												</a></td>
+											<td><a class=" operation modifyStatus btn btn-success btn-xs" 
+											     href="${pageContext.request.contextPath}/qds/dinHistoryDetailWindows?id=${p.id }&order=${p.order}&moduleNo=${p.moduleNo}"
+												 data-toggle="tooltip" id=${p.id } style="cursor: pointer"><i class="fa fa-table"></i>详情</a>
+											</td>
 										</tr>
 									</c:forEach>
 								</tbody>
@@ -134,9 +135,153 @@
 			</div>
 		</div>
 	</div>
+	
+	<!-- detailHistory start -->
+	<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close closeModal" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">详情</h4>
+				</div>
+				<div class="modal-body">
+
+					<h5 id="myModalRealname"></h5>
+					<input class="hide" id="myModalUsername" name="myModalUsername"></input>
+					<!-- <form class="form-horizontal form-label-left input_mask" id="input_mask"> -->
+					<div class="form-horizontal form-label-left input_mask" id="input_mask">
+						<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed"
+							cellspacing="0" width="100%" role="grid" aria-describedby="datatable-responsive_info">
+
+							<!-- <div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-md-3">模块串号</label>
+									<div class="col-md-9">
+										<input name="moduleNo" id="moduleNo" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">单板串号</label>
+									<div class="col-md-9 col-sm-9 col-xs-12">
+										<input name="assyNoP" id="assyNoP" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">单板串号</label>
+									<div class="col-md-9 col-sm-9 col-xs-12">
+										<input name="assyNoM" id="assyNoM" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">装配时间</label>
+									<div class="col-md-9">
+										<input name="assyTime" id="assyTime" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">装配人员</label>
+									<div class="col-md-9">
+										<input name="assyBy" id="assyBy" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">装配修改时间</label>
+									<div class="col-md-9">
+										<input name="assyModifyTime" id="assyModifyTime" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">装配修改人员</label>
+									<div class="col-md-9">
+										<input name="assyModifyBy" id="assyModifyBy" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">检验人员</label>
+									<div class="col-md-9">
+										<input name="inspectionBy" id="inspectionBy" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">检验时间</label>
+									<div class="col-md-9">
+										<input name="inspectionTime" id="inspectionTime" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+							</div> -->
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-md-3">测试代码</label>
+									<div class="col-md-9">
+										<input name="testCode" id="testCode" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">测试状态</label>
+									<div class="col-md-9">
+										<input name="testStatus" id="testStatus" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">状态</label>
+									<div class="col-md-9">
+										<input name="status" id="status" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">测试结果</label>
+									<div class="col-md-9">
+										<input name="testResult" id="testResult" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">测试人员</label>
+									<div class="col-md-9">
+										<input name="testBy" id="testBy" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">测试时间</label>
+									<div class="col-md-9">
+										<input name="testTime" id="testTime" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">测试设备</label>
+									<div class="col-md-9">
+										<input name="testEquipment" id="testEquipment" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">测试描述</label>
+									<div class="col-md-9">
+										<input name="testDiscription" id="testDiscription" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-md-3">不良代码</label>
+									<div class="col-md-9">
+										<input name="testErrorCode" id="testErrorCode" type="text" class="form-control" disabled="disabled">
+									</div>
+								</div>
+							</div>
+						</table>
+					</div>
+					<!-- </form> -->
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default closeModal" data-dismiss="modal">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+						关闭
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- detailHistory end -->
+	
 </div>
 <%@include file="common/footer.jsp"%>
 <script src="${pageContext.request.contextPath }/statics/qdsjs/qDinHistory.js"></script>
-<!-- Datatables -->
-<!-- sorting -->
-<%-- <script src="${pageContext.request.contextPath }/statics/js/jquery.dataTables.min.js"></script> --%>

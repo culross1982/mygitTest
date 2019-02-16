@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>SFCL Digital System</title>
-
+test==================
 <!-- Bootstrap -->
 <link href="${pageContext.request.contextPath }/statics/css/bootstrap.min.css" rel="stylesheet">
 <!-- Font Awesome图标字体库 -->

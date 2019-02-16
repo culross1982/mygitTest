@@ -43,4 +43,9 @@
 		select ver from qdsModule m
 		where module=#{module} and m.qdsProCategoryId=(select id from qdsProCategory where qdsProCategoryName=#{qdsProCategoryName}) group by ver
 	</select>
+	
+	<!-- 根据part获取module -->
+	<select id="getModuleByPart" resultType="QdsModule">
+		select module,ver from qdsModule where part=#{part} and qdsProCategoryId=#{qdsProCategoryId}
+	</select>
 </mapper>

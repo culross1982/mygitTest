@@ -1,4 +1,4 @@
-   <!-- jQuery -->
+    <!-- jQuery -->
     <script src="${pageContext.request.contextPath }/statics/js/jquery.min.js"></script>
     <!-- Bootstrap -->
     <script src="${pageContext.request.contextPath }/statics/js/bootstrap.min.js"></script>
@@ -11,6 +11,8 @@
     <!-- daterangepicker-->
 	<script src="${pageContext.request.contextPath }/statics/js/daterangepicker/moment.min.js"></script>
 	<script src="${pageContext.request.contextPath }/statics/js/daterangepicker/daterangepicker.js"></script>
+	<!-- onload menu -->
+    <script src="${pageContext.request.contextPath }/statics/packingjs/packingReady.js"></script> 
     <!-- Datatables -->
     <!-- sorting -->
     <%-- <script src="${pageContext.request.contextPath }/statics/js/jquery.dataTables.min.js"></script> --%>
@@ -37,5 +39,3 @@
   
   	<!-- humane-->
   	<script src="${pageContext.request.contextPath }/statics/humane/humane.js"></script>
-  	<!-- onload menu -->
-    <script src="${pageContext.request.contextPath }/statics/packingjs/packingReady.js"></script> 

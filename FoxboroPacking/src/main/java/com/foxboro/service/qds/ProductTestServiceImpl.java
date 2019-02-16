@@ -35,4 +35,53 @@ public class ProductTestServiceImpl implements ProductTestService {
 		productTestDao.addTestData(qProTest);
 	}
 
+	//根据moduleNo查询最后一条记录是否为PASS
+	@Override
+	public String isTestPassAtTheEnd(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return productTestDao.isTestPassAtTheEnd(moduleNo, qdsProCategoryId);
+	}
+
+	//根据moduleNo查询是否有记录为FAIL
+	@Override
+	public Integer isTestFailedByModuleNo(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return productTestDao.isTestFailedByModuleNo(moduleNo, qdsProCategoryId);
+	}
+
+	//设置PASS产品最后1条FAIL的记录的errorStauts为-1，表示有维修记录待输入
+	@Override
+	public void updateErrorStatusAtTheEnd(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		productTestDao.updateErrorStatusAtTheEnd(moduleNo, qdsProCategoryId);
+	}
+
+	//根据id修改errorStatus
+	@Override
+	public void updateProductTestById(int id, int errorStatus, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		productTestDao.updateProductTestById(id, errorStatus, qdsProCategoryId);
+	}
+
+	//根据moduleNo查询是否存在测试数据
+	@Override
+	public Integer isExistTestByModuleNo(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return productTestDao.isExistTestByModuleNo(moduleNo, qdsProCategoryId);
+	}
+
+	//根据moduleNo查询最后一条PASS的测试数据
+	@Override
+	public QdsProductTest getQdsProTestByTestAtEnd(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return productTestDao.getQdsProTestByTestAtEnd(moduleNo, qdsProCategoryId);
+	}
+
+	//根据moduleNo查询最后一条FAIL的测试数据
+	@Override
+	public QdsProductTest getQdsProTestByTestFailAtEnd(String moduleNo, int qdsProCategoryId) throws Exception {
+		// TODO Auto-generated method stub
+		return productTestDao.getQdsProTestByTestFailAtEnd(moduleNo, qdsProCategoryId);
+	}
+
 }
